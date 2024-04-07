@@ -1,9 +1,9 @@
 {
-    "version": 2,
+    "devCommand": "uvicorn api:app --host 0.0.0.0 --port 3000",
     "builds": [
       { "src": "backend/api.py", "use": "@vercel/python", "config": { "runtime": "python3.9" }}
     ],
     "routes": [
-      { "src": "/backend/(.*)", "dest": "backend/api.py" }
+      { "src": "/(.*)", "dest": "backend/api.py" }
     ]
   }
