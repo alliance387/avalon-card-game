@@ -13,8 +13,9 @@ function Header() {
 		<header>
 			<img
 				className="logo"
-				src="https://www.100ms.live/assets/logo.svg"
+				src="https://avalon78.ca/wp-content/uploads/2021/06/logo.png"
 				alt="logo"
+				width="7%"
 			/>
 			{isConnected && (
 				<button

@@ -4,7 +4,7 @@ import { useState } from "react";
 function Join() {
   const hmsActions = useHMSActions();
   const [inputValues, setInputValues] = useState({
-    name: "",
+    userName: "",
     token: ""
   });
 
@@ -21,7 +21,6 @@ function Join() {
       userName = '',
       roomCode = '',
     } = inputValues;
-
     // use room code to fetch auth token
     const authToken = await hmsActions.getAuthTokenByRoomCode({ roomCode });
   
@@ -42,7 +41,7 @@ function Join() {
           onChange={handleInputChange}
           id="name"
           type="text"
-          name="name"
+          name="userName"
           placeholder="Your name"
         />
       </div>
