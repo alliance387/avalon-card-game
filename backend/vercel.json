@@ -1,9 +1,9 @@
 {
     "version": 2,
     "builds": [
-      { "src": "/backend/api.py", "use": "@vercel/python" }
+      { "src": "backend/api.py", "use": "@vercel/python", "config": { "runtime": "python3.9" }}
     ],
     "routes": [
-      { "src": "/backend", "dest": "api.py" }
+      { "src": "/backend", "dest": "/backend/api.py" }
     ]
   }
