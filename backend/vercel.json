@@ -4,6 +4,6 @@
       { "src": "backend/api.py", "use": "@vercel/python", "config": { "runtime": "python3.9" }}
     ],
     "routes": [
-      { "src": "/backend", "dest": "/backend/api.py" }
+      { "src": "/backend/(.*)", "dest": "backend/api.py" }
     ]
   }
