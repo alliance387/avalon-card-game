@@ -33,7 +33,7 @@ function Join() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Join Room Renatko 5252525252</h2>
+      <h2>Join Room</h2>
       <div className="input-container">
         <input
           required
