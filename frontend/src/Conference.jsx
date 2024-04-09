@@ -6,13 +6,31 @@ function Conference() {
 
   return (
     <div className="conference-section">
-      <h2>Conference</h2>
       <div className="peers-container-main">
-        {peers.map((peer) => (
-          <Peer key={peer.id} peer={peer} />
-        ))}
+      <img
+				className="logo"
+				src="https://avalon78.ca/wp-content/uploads/2021/06/logo.png"
+				alt="logo"
+				width="7%"
+			/>
       </div>
       <div className="peers-container-siteitem">
+        <div>
+          <img
+				className="logo"
+				src="https://avalon78.ca/wp-content/uploads/2021/06/logo.png"
+				alt="logo"
+				width="7%"
+			/>
+      </div>
+        <div>
+          <img
+				className="logo"
+				src="https://avalon78.ca/wp-content/uploads/2021/06/logo.png"
+				alt="logo"
+				width="7%"
+			/>
+      </div>
       </div>
     </div>
   );
