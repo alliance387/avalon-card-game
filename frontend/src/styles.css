@@ -72,7 +72,7 @@
   .conference-section h2 {
     margin-bottom: 20px;
   }
-  
+
   .join-form h2{
     text-align: center;
   }
@@ -90,7 +90,7 @@
   
   .conference-section {
     padding: 20px 30px;
-    max-width: 960px;
+    max-width: 100%;
     margin: 0 auto;
   }
   
@@ -102,14 +102,14 @@
   
   .peers-container {
     display: grid;
-    grid-template-columns: repeat(3, minmax(min-content, 1fr));
+    grid-template-columns: 60% 40%;
     place-items: center;
     grid-gap: 10px;
   }
   
   .peer-video {
-    height: 250px;
-    width: 250px;
+    height: 90%;
+    width: 90%;
     border-radius: 40%;
     object-fit: cover;
     margin-bottom: 10px;
@@ -117,6 +117,7 @@
   
   .local.peer-video {
     transform: scaleX(-1);
+    border-radius: 0%;
   }
   
   .peer-name {
