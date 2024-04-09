@@ -115,7 +115,6 @@
   .peer-video {
     height: 90%;
     width: 90%;
-    border-radius: 40%;
     object-fit: cover;
     margin-bottom: 10px;
   }
@@ -132,6 +131,7 @@
   
   .peer-container {
     padding: 10px;
+    height: 100%;
   }
   
   .control-bar {
