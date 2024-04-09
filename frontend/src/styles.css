@@ -98,13 +98,17 @@
     text-align: center;
     font-size: 32px;
     padding-bottom: 10px;
+    display: flex;
+    margin: 0 auto;
   }
   
-  .peers-container {
-    display: grid;
-    grid-template-columns: 60% 40%;
-    place-items: center;
-    grid-gap: 10px;
+  .peers-containe-main {
+    flex-grow:1;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .peers-containe-siteitem{
+    display: flex;
+    flex-direction: column;
   }
   
   .peer-video {
