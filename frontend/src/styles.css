@@ -73,6 +73,10 @@
     margin-bottom: 20px;
   }
   
+  .join-form h2{
+    text-align: center;
+  }
+  
   .btn-danger {
     border: 1px solid transparent;
     border-radius: 4px;
