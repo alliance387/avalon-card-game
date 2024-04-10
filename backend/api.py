@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 import uvicorn
 
-from util_func_api import  get_info_users
+from util_func_api import  get_info_users, edit_role_users
 
 app = FastAPI()
 load_dotenv()
@@ -25,7 +25,9 @@ async def read_root():
 @app.get('/user_order/{room_id}')
 async def start_game(room_id: str):
     id_users = get_info_users(url=f'{URL}active-rooms/{room_id}', headers=HEADERS)
-    return {'message':'Ошибка'} if id_users =='Произошла ошибка' else {"info_users": list(id_users.keys())}
+    id_users= list(id_users.keys())
+    error_mess = edit_role_users(url=f'{URL}active-rooms/{room_id}', headers=HEADERS,id_users=id_users)
+    return {'message':'Ошибка'} if id_users =='Произошла ошибка' else {"info_users": id_users}
 
 
 @app.get('/info_users/{room_id}')

@@ -4,7 +4,6 @@ import requests
 def edit_role_users(url: str,
                     headers,
                     id_users: list):
-
     copy_id_users = id_users.copy()
     random.shuffle(copy_id_users)
     roles = ['guest',"guest"]
@@ -14,7 +13,7 @@ def edit_role_users(url: str,
             payload = {
                 'role': role
             }
-            requests.post(url= f'{url}/{copy_id_users.pop()}', headers=headers, json=payload)
+            requests.post(url= f'{url}/peers/{copy_id_users.pop()}', headers=headers, json=payload)
 
     # roles = ['Merlin', "Percival", "Mordred", "Morgana"]
     # random.shuffle(roles)
@@ -29,7 +28,7 @@ def edit_role_users(url: str,
     #     requests.post(url= f'{url}/{copy_id_users.pop()}', headers=headers, json=payload)
     # if len(id_users) >= 9:
     #     payload = {'role': 'Oberon'}
-    #     requests.post(url= f'{url}/{copy_id_users.pop()}', headers=headers, json=payload)
+    #     requests.post(url= f'{url}/peers/{copy_id_users.pop()}', headers=headers, json=payload)
 
-    else:
-        return print("Пользователей не достаточно")
+    # else:
+    #     return print("Пользователей не достаточно")
