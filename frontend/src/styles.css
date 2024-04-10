@@ -120,6 +120,8 @@
     flex-basis:50%;
     min-height:150px;
     margin-left:10px;
+    width: 100%;
+    height: 50%;
   }
   
   .peer-video {
