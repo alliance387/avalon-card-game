@@ -32,7 +32,7 @@ function Join() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="join-form" onSubmit={handleSubmit}>
       <h2>Join Room</h2>
       <div className="input-container">
         <input
