@@ -25,9 +25,7 @@ async def read_root():
 @app.get('/user_order/{room_id}')
 async def start_game(room_id: str):
     id_users = get_info_users(url=f'{URL}active-rooms/{room_id}', headers=HEADERS)
-    return {
-        'message':list(id_users.keys())
-    }
+    return {'message':'Ошибка'} if id_users =='Произошла ошибка' else {"info_users": list(id_users.keys())}
 
 
 @app.get('/info_users/{room_id}')
