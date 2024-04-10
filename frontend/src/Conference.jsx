@@ -36,7 +36,7 @@ function Conference() {
         {
           peers.filter(peer => peer.id !=  main_focus_peer[peers.filter(peer => peer.isLocal)[0].id]).map(peer => (
             <div onClick={() => changeMainFocus(peer.id, peers.filter(peer => peer.isLocal)[0].id)}>
-              <Peer key={peer.id} peer={peer}/>
+              <Peer key={peer.id} peer={peer} className="item"/>
             </div>
           ))
         }

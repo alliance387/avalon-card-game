@@ -90,7 +90,7 @@
   
   .conference-section {
     padding: 20px 30px;
-    max-width: 100%;
+    max-width: 100px;
     margin: 0 auto;
     max-width: 700px;
     display: flex;
@@ -104,12 +104,22 @@
   }
   
   .peers-containe-main {
+    min-height:300px;
+  }
+  .peers-containe-main .item{
     flex-grow:1;
     display: flex; justify-content: center; align-items: center;
   }
   .peers-containe-siteitem{
     display: flex;
     flex-direction: column;
+    flex-basis:150px;
+	flex-shrink:0;
+  }
+  .item{
+    flex-basis:50%;
+    min-height:150px;
+    margin-left:10px;
   }
   
   .peer-video {
@@ -121,7 +131,6 @@
   
   .local.peer-video {
     transform: scaleX(-1);
-    border-radius: 0%;
   }
   
   .peer-name {
@@ -131,7 +140,6 @@
   
   .peer-container {
     padding: 10px;
-    height: 100%;
   }
   
   .control-bar {
