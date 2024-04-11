@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class Room(BaseModel):
     room_id:str
-    code:int
+    code:str
 
     class Config:
         orm_mode = True
