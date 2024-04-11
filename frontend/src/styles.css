@@ -89,7 +89,9 @@
   }
   
   .conference-section {
-
+    display: flex;
+    margin: 0 auto;
+    max-width: 1700px;
   }
   
   .conference-section h2 {
@@ -99,10 +101,8 @@
   }
   
   .peers-containe-main {
-
-  }
-  .peers-containe-main .item{
-
+    display: flex;
+    margin: 0 auto;
   }
   .peers-containe-siteitem{
 
@@ -112,7 +112,9 @@
   }
   
   .peer-video {
-
+    height: 90%;
+    width: 90%;
+    object-fit: cover;
   }
 
   .button-start{
@@ -133,6 +135,10 @@
   .peer-container {
     padding: 10px;
     position: relative;
+    margin: 0;
+    padding: 0;
+    width: 500px;
+    height: 400px;
   }
   
   .control-bar {
