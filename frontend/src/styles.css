@@ -107,6 +107,12 @@
   .peers-containe-siteitem{
 
   }
+  .peers-containe-main .item{
+    flex-grow:1;
+    display: flex; 
+    justify-content: center;
+  }
+
   .item{
 
   }
