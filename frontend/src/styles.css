@@ -113,12 +113,14 @@
 
   .peers-container-siteitem {
     flex-basis:50%;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .item{
     width: 300px;
     height: 250px;
-    margin: 10px 0;
+    margin: 10px 10px;
   }
   
   .peer-video {
