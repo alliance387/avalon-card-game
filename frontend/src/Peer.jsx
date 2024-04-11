@@ -9,6 +9,8 @@ function Peer({ peer, is_selected, changeDecision }) {
       <img class ="button-start"src={is_selected ? "gold_coin.png" : "grey_coin.png"} alt="" width="10%" onClick={() => changeDecision(peer.id)}/>
       
       <video
+        width="300px"
+        height="200px"
         ref={videoRef}
         className={`peer-video ${peer.isLocal ? "local" : ""}`}
         autoPlay
