@@ -130,6 +130,11 @@
     object-fit: cover;
     margin-bottom: 10px;
   }
+
+  .button-start{
+    position:absolute;
+    z-index:300000;
+  }
   
   .local.peer-video {
     transform: scaleX(-1);
@@ -142,6 +147,7 @@
   
   .peer-container {
     padding: 10px;
+    position: relative;
   }
   
   .control-bar {
