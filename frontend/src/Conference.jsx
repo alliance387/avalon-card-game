@@ -43,7 +43,9 @@ function Conference() {
     <div className="conference-section">
       <div className="peers-container-main">
         {peers.filter(outer_peer => outer_peer.id == main_focus_peer[peers.filter(peer => peer.isLocal)[0].id]).map(peer => (
+          <div className="main-item">
           <Peer key={peer.id} peer={peer} is_selected={decision_array[peer.id]} changeDecision={changeDecision}/>
+          </div>
         ))}
       </div>
       <div className="peers-container-siteitem">
