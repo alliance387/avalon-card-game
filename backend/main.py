@@ -22,16 +22,16 @@ async def root():
     return {"message": "hello world"}
 
 
-@app.post('/book/', response_model=SchemaRoom)
-async def book(book: SchemaRoom):
-    db_book = ModelRoom(title=book.title, rating=book.rating, author_id = book.author_id)
-    db.session.add(db_book)
+@app.post('/room/', response_model=SchemaRoom)
+async def room(room: SchemaRoom):
+    db_room = ModelRoom(room_id=room.room_id, code=room.code)
+    db.session.add(db_room)
     db.session.commit()
-    return db_book
+    return db_room
 
 
-@app.get('/book/')
-async def book():
+@app.get('/room/')
+async def room():
     book = db.session.query(ModelRoom).all()
     return book
 
