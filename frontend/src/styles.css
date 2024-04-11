@@ -103,14 +103,11 @@
   .peers-containe-main {
     display: flex;
     margin: 0 auto;
+    flex-grow:1;
+    justify-content: center;
   }
   .peers-containe-siteitem{
-
-  }
-  .peers-containe-main .item{
-    flex-grow:1;
-    display: flex; 
-    justify-content: center;
+    flex-basis:50%;
   }
 
   .item{
@@ -119,7 +116,7 @@
   
   .peer-video {
     height: 90%;
-    width: 90%;
+    width: 100%;
     object-fit: cover;
   }
 
