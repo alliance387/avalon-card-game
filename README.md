@@ -4,9 +4,12 @@ Project about three dudes who decided to make some projects to enjoy with our fr
 
 ## Frameworks and technologies
 <div>
-<img src="https://icon.icepanel.io/Technology/svg/FastAPI.svg" height="60" /> &nbsp; &nbsp; <img src="https://icon.icepanel.io/Technology/svg/React.svg" height="60" /> &nbsp; &nbsp; 
-<img src="https://icon.icepanel.io/Technology/svg/TypeScript.svg" height="60" /> &nbsp; &nbsp; <img src="https://icon.icepanel.io/Technology/svg/PostgresSQL.svg" height="60" /> &nbsp;&nbsp;
-<img src="https://icon.icepanel.io/Technology/svg/SQLAlchemy.svg" height="60" /> &nbsp;&nbsp;<img src="https://icon.icepanel.io/Technology/svg/Docker.svg" height="60" />
+<img src="assets/React.svg" height="60" /> &nbsp; &nbsp; 
+<img src="assets/FastAPI.svg" height="60" /> &nbsp; &nbsp; 
+<img src="assets/TypeScript.svg" height="60" /> &nbsp; &nbsp; 
+<img src="assets/PostgresSQL.svg" height="60" /> &nbsp; &nbsp; 
+<img src="assets/SQLAlchemy.svg" height="60" /> &nbsp;&nbsp;
+<img src="assets/Docker.svg" height="60" /> &nbsp;&nbsp;
 </div>
 
 ## Links to our demo apps
