@@ -17,17 +17,23 @@ const required = value => {
 
 const API_URL = "https://avalon-card-game.onrender.com";
 
-const Login = () => {
+const Register = () => {
   const { setToken, setLocalEmail } = useAuth();
 
   const form = useRef();
 
   const [email, setEmail] = useState("");
+  const [full_name, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+
+  const onChangeFullName = (e) => {
+    const full_name = e.target.value;
+    setFullName(full_name);
+  };
 
   const onChangeEmail = (e) => {
     const email = e.target.value;
@@ -42,7 +48,8 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
-    axios.post(API_URL + "/user/login", {
+    axios.post(API_URL + "/user/signup", {
+    full_name,
       email,
       password,
     })
@@ -60,6 +67,17 @@ const Login = () => {
     <div className="col-md-12">
       <div className="card card-container">
         <form onSubmit={handleLogin} ref={form}>
+        <div className="form-group">
+            <label htmlFor="full_name">Full name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="full_name"
+              value={full_name}
+              onChange={onChangeFullName}
+              validations={[required]}
+            />
+          </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -89,7 +107,7 @@ const Login = () => {
               {loading && (
                 <span className="spinner-border spinner-border-sm"></span>
               )}
-              <span>Login</span>
+              <span>Register</span>
             </button>
           </div>
 
@@ -101,11 +119,10 @@ const Login = () => {
             </div>
           )}
         </form>
-        
       </div>
-      <h2><a href="/register">Sign up</a></h2>
+      <h2><a href="/login">Login</a></h2>
     </div>
   );
 };
 
-export default Login;
+export default Register;
