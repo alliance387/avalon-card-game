@@ -21,16 +21,16 @@ const Login = () => {
 
   const form = useRef();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
-  const onChangeUsername = (e) => {
-    const username = e.target.value;
-    setUsername(username);
+  const onChangeEmail = (e) => {
+    const email = e.target.value;
+    setEmail(email);
   };
 
   const onChangePassword = (e) => {
@@ -42,12 +42,12 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     axios.post(API_URL + "/user/login", {
-      username,
+      email,
       password,
     })
     .then((response) => {
-      if (response.data.token) {
-        setToken(response.data.token);
+      if (response.data.access_token) {
+        setToken(response.data.access_token);
         navigate("/", { replace: true });
       }
     });
@@ -59,13 +59,13 @@ const Login = () => {
       <div className="card card-container">
         <form onSubmit={handleLogin} ref={form}>
           <div className="form-group">
-            <label htmlFor="username">Email</label>
+            <label htmlFor="email">Email</label>
             <input
               type="text"
               className="form-control"
-              name="username"
-              value={username}
-              onChange={onChangeUsername}
+              name="email"
+              value={email}
+              onChange={onChangeEmail}
               validations={[required]}
             />
           </div>
