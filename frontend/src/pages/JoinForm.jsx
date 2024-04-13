@@ -5,8 +5,7 @@ import { useAuth } from "../provider/authProvider";
 
 const API_URL = "https://avalon-card-game.onrender.com";
 
-function Join() {
-  const { token, localEmail } = useAuth();
+function Join({token, localEmail}) {
 
   const hmsActions = useHMSActions();
   const [inputValues, setInputValues] = useState({
@@ -40,6 +39,7 @@ function Join() {
     const authToken = await hmsActions.getAuthTokenByRoomCode({ roomCode });
   
     try { 
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       axios({method: 'post', url: API_URL + `/session`, params: {room_code: roomCode, user_email: localEmail}, headers:{"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
       .then((response) => {
         console.log(response.data);
@@ -53,15 +53,20 @@ function Join() {
   };
 
   useEffect(() => {
-    if (token !== ""){
-      axios.get(API_URL + `/session`, {params: {'user_email': localEmail}}, {headers: {"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
+    if(axios.defaults.headers.common["Authorization"] === ""){
+      return
+    }
+    else{
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.get(API_URL + `/session`, {params: {'user_email': localEmail}})
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         setSessionRooms(response.data);
       }).catch(e => {
         console.log(e);
       });
     }
+    
   }, []);
 
   return (

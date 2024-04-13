@@ -8,8 +8,10 @@ import {
   useHMSStore
 } from "@100mslive/react-sdk";
 import Footer from "./Footer";
+import { useAuth } from "../provider/authProvider";
 
 export default function MainWindow() {
+  const { token, localEmail } = useAuth();
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const hmsActions = useHMSActions();
 
@@ -29,7 +31,7 @@ export default function MainWindow() {
           <Footer />
         </>
       ) : (
-        <JoinForm />
+        <JoinForm token={token} localEmail={localEmail}/>
       )}
       </>
   );
