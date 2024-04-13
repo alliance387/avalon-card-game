@@ -1,7 +1,18 @@
 from pydantic import BaseModel, EmailStr
 
+# room part
 
-class User(BaseModel):
+class RoomSchema(BaseModel):
+    room_id:str
+    code:str
+
+    class Config:
+        orm_mode = True
+
+
+# user part
+
+class UserSchema(BaseModel):
     full_name: str 
     email: EmailStr 
     password: str
@@ -15,7 +26,7 @@ class User(BaseModel):
             }
         }
 
-class UserLogin(BaseModel):
+class UserLoginSchema(BaseModel):
     email: EmailStr
     password: str 
 
@@ -26,3 +37,12 @@ class UserLogin(BaseModel):
                 "password": "i_love_when_big"
             }
         }
+
+# session
+
+class SessionSchema(BaseModel):
+    user_id: int
+    room_id: int
+
+    class Config:
+        orm_mode = True

@@ -26,7 +26,7 @@ config.set_main_option('sqlalchemy.url', os.environ['DATABASE_URL'])
 fileConfig(config.config_file_name)
 
 
-import models
+import sql.models as models
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
