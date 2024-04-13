@@ -12,7 +12,7 @@ from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema
 # models
 from sql.models import ModelRoom
 # crud
-from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user
+from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code
 # utils
 from auth import JWTBearer, signJWT
 
@@ -75,10 +75,10 @@ async def user_login(user: UserLoginSchema):
         return signJWT(user.email)
 
 @app.post("/session", dependencies=[Depends(JWTBearer())], tags=["session"])
-async def make_session(ms100_room_id: str, user_email: str):
+async def make_session(room_code: str, user_email: str):
     found_user = get_user_by_email(db.session, user_email)
     if found_user:
-        found_room = get_room_by_100ms_room_id(db.session, ms100_room_id)
+        found_room = get_room_by_room_code(db.session, room_code)
         if found_room:
             return create_session(db.session, SessionSchema(room_id=found_room.id, user_id=found_user.id))
         else:

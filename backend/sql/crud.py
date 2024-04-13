@@ -41,6 +41,9 @@ def create_session(db: Session, session: SessionSchema):
 def get_room_by_100ms_room_id(db: Session, ms100_room_id: str):
     return db.query(ModelRoom).filter(ModelRoom.room_id == ms100_room_id).first()
 
+def get_room_by_room_code(db: Session, room_code: str):
+    return db.query(ModelRoom).filter(ModelRoom.code == room_code).first()
+
 def create_room(db: Session, room: RoomSchema):
     db_room = ModelRoom(room_id = room.room_id, code = room.code)
     db.add(db_room)
