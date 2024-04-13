@@ -1,14 +1,18 @@
-import JoinForm from "./JoinForm";
+import JoinForm from "./pages/JoinForm";
 import Header from "./Header";
 import "./styles.css";
-import Conference from "./Conference";
+import Conference from "./pages/Conference";
 import { useEffect } from "react";
 import {
   selectIsConnectedToRoom,
   useHMSActions,
   useHMSStore
 } from "@100mslive/react-sdk";
-import Footer from "./Footer";
+
+import AuthProvider from "./provider/authProvider";
+import Routes from "./routes";
+
+import Footer from "./pages/Footer";
 
 export default function App() {
   const isConnected = useHMSStore(selectIsConnectedToRoom);
@@ -23,16 +27,13 @@ export default function App() {
   }, [hmsActions, isConnected]);
 
   return (
-    <div className="App">
-      <Header />
-      {isConnected ? (
-        <>
-          <Conference />
-          <Footer />
-        </>
-      ) : (
-        <JoinForm />
-      )}
-    </div>
+    <AuthProvider>
+      
+      <div className="App">
+        <Header />
+        <Routes />
+      </div>
+    </AuthProvider>
+
   );
 }
