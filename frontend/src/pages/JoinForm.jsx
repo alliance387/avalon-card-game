@@ -40,7 +40,7 @@ function Join() {
     const authToken = await hmsActions.getAuthTokenByRoomCode({ roomCode });
   
     try { 
-      axios.post(API_URL + `/session`, {'room_code': roomCode, 'user_email': localEmail}, {headers: {"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
+      axios({method: 'post', url: API_URL + `/session`, params: {room_code: roomCode, user_email: localEmail}, headers:{"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
       .then((response) => {
         console.log(response.data);
       }).catch(e => {
@@ -62,7 +62,7 @@ function Join() {
         console.log(e);
       });
     }
-  }, [token]);
+  }, []);
 
   return (
     <>
