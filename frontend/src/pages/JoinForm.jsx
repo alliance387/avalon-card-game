@@ -53,6 +53,9 @@ function Join() {
   };
 
   useEffect(() => {
+      if(token === ""){
+        return
+      }
       axios.get(API_URL + `/session`, {params: {'user_email': localEmail}}, {headers: {"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
       .then((response) => {
         console.log(response.data);
