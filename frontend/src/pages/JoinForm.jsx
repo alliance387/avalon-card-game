@@ -53,7 +53,6 @@ function Join() {
   };
 
   useEffect(() => {
-    if (token !== ""){
       axios.get(API_URL + `/session`, {params: {'user_email': localEmail}}, {headers: {"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
       .then((response) => {
         console.log(response.data);
@@ -61,7 +60,6 @@ function Join() {
       }).catch(e => {
         console.log(e);
       });
-    }
   }, []);
 
   return (
