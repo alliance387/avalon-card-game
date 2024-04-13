@@ -25,8 +25,8 @@ app = FastAPI()
 app.add_middleware(DBSessionMiddleware, db_url=os.environ['DATABASE_URL'])
 
 origins = [
-    "https://avalon-card-game.vercel.app/",
-    "https://avalon-card-game-egor.vercel.app/",
+    "https://avalon-card-game.vercel.app",
+    "https://avalon-card-game-egor.vercel.app",
     "http://localhost",
     "http://localhost:8080",
     "http://localhost:3000",
