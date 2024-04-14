@@ -59,3 +59,23 @@ class AppSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+# game
+class GameSchema(BaseModel):
+    number: int
+    good_win: int
+    evil_win: int
+    rejected_rounds: int
+
+    class Config:
+        orm_mode = True
+
+
+class ActiveUserSchema(BaseModel):
+    role: int
+    user_id: int
+    game_id: int
+
+    class Config:
+        orm_mode = True

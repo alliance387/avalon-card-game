@@ -14,7 +14,8 @@ from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, A
 from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
-                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key
+                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
+                    get_active_user
 # utils
 from auth import JWTBearer, signJWT
 from webrtc import generateManagementToken
@@ -117,6 +118,72 @@ async def make_app(app: AppSchema):
 @app.get("/apps", tags=["apps"])
 async def get_apps():
     return get_all_apps(db.session)
+
+
+# game logic
+@app.post("/game/poll", tags=["games"])
+async def count_poll(game_id: int, accept_quest: int) -> dict[str, int]:
+    game = get_game_by_id(db.session, game_id)
+    if accept_quest * 2 > game.number:
+        return {
+            'is_quest_accepted': 1,
+            'rejected_rounds': 0
+        }
+    else:
+        game = update_room(db.session, game.id, {'rejected_rounds': 1})
+        if game.rejected_rounds >= 5:
+            update_room_status(db.session, game.id, -1)
+            return {
+                'win': 'Evil'
+            }
+        else: 
+            {
+                'is_quest_accepted': 0,
+                'rejected_rounds': 1
+            }
+
+@app.post("/game/quest", tags=["games"])
+async def make_quest(game_id: int, is_success: bool, fails: int) -> dict[str, str]:
+    game = update_room(db.session, game_id, {'good_win': int(is_success), 'evil_win': int(not is_success)})
+    if game.evil_win < 3 and game.good_win < 3:
+        return {
+            'fails': fails,
+            'is_quest_accepted': 0,
+            'good_win': game.good_win,
+            'evil_win': game.evil_win,
+            'rejected_rounds': 0
+        }
+    else:
+        if game.evil_win >= 3:
+            update_room_status(db.session, game.id, -1)
+            return {
+                'win': 'Evil'
+            }
+        else:
+            return {
+                'event': 'Assasin',
+                'fails': fails,
+                'is_quest_accepted': 0,
+                'good_win': game.good_win,
+                'evil_win': game.evil_win,
+                'rejected_rounds': 0
+            }
+
+
+@app.post("/game/assasin_move", tags=["games"])
+async def assasin_move(game_id: int, email: str) -> dict[str, str]:
+    suspected_merlin = get_user_by_email(db.session, email)
+    active_user_info = get_active_user(db.session, game_id, suspected_merlin.id)
+    if active_user_info.role == 'Merlin':
+        update_room_status(db.session, game_id, -1)
+        return {
+            'win': 'Evil'
+        }
+    else:
+        update_room_status(db.session, game_id, 1)
+        return {
+            'win': 'Good'
+        }
 
 
 # util 

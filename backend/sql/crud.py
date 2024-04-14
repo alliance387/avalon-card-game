@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
 
-from .models import ModelRoom, ModelUser, ModelSession, ModelApp
-from .schema import UserSchema, SessionSchema, RoomSchema, AppSchema
+from .models import ModelRoom, ModelUser, ModelSession, ModelApp, ModelGame, ModelActiveUser
+from .schema import UserSchema, SessionSchema, RoomSchema, AppSchema, GameSchema, ActiveUserSchema
 
 # user part
 def get_user(db: Session, user_id: int):
@@ -28,8 +28,10 @@ def create_user(db: Session, user: UserSchema, hashed_password: str):
 def get_sessions_by_user(db: Session, user: UserSchema):
     return db.query(ModelSession).filter(ModelSession.user_id == user.id).all()
 
+
 def get_sessions_by_room(db: Session, room: RoomSchema):
     return db.query(ModelSession).filter(ModelSession.room_id == room.id).all()
+
 
 def create_session(db: Session, session: SessionSchema):
     db_session = ModelSession(user_id = session.user_id, room_id = session.room_id)
@@ -41,17 +43,21 @@ def create_session(db: Session, session: SessionSchema):
 def get_all_rooms(db: Session):
     return db.query(ModelRoom).all()
 
+
 def get_room_by_100ms_room_id(db: Session, ms100_room_id: str):
     return db.query(ModelRoom).filter(ModelRoom.room_id == ms100_room_id).first()
 
+
 def get_room_by_room_code(db: Session, room_code: str):
     return db.query(ModelRoom).filter(ModelRoom.code == room_code).first()
+
 
 def create_room(db: Session, room: RoomSchema):
     db_room = ModelRoom(room_id = room.room_id, code = room.code, app_id= room.app_id)
     db.add(db_room)
     db.commit()
     return db_room
+
 
 # app part
 def create_app(db: Session, app: AppSchema):
@@ -60,11 +66,14 @@ def create_app(db: Session, app: AppSchema):
     db.commit()
     return db_app
 
+
 def get_all_apps(db: Session):
     return db.query(ModelApp).all()
 
+
 def get_app_by_access_key(db: Session, access_key: str):
     return db.query(ModelApp).filter(ModelApp.access_key == access_key).first()
+
 
 def update_app_management_key(db: Session, app_id: int, management_key: str, date: str):
     db_app = db.query(ModelApp).filter(ModelApp.id == app_id).first()
@@ -73,13 +82,49 @@ def update_app_management_key(db: Session, app_id: int, management_key: str, dat
     db.commit()
     return management_key
 
-# def get_items(db: Session, skip: int = 0, limit: int = 100):
-#     return db.query(models.Item).offset(skip).limit(limit).all()
+
+# game part
+def create_game(db: Session, number: int, room_id: int):
+    db_game = ModelGame(number = number, room_id = room_id)
+    db.add(db_game)
+    db.commit()
+    return db_game
 
 
-# def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
-#     db_item = models.Item(**item.dict(), owner_id=user_id)
-#     db.add(db_item)
-#     db.commit()
-#     db.refresh(db_item)
-#     return db_item
+def get_game_by_id(db: Session, game_id: int):
+    return db.query(ModelGame).filter(ModelGame.id == game_id).first()
+
+
+def update_room(db: Session, game_id: int, elements_to_change: dict[str, int]):
+    db_game = db.query(ModelGame).filter(ModelGame.id == game_id).first()
+
+    if elements_to_change.get('evil_win') or elements_to_change.get('good_win'):
+        db_game.good_win += int(elements_to_change.get('good_win', 0))
+        db_game.evil_win += int(elements_to_change.get('evil_win', 0))
+        db_game.rejected_rounds = 0
+    else:
+        db_game.rejected_rounds += elements_to_change.get('rejected_rounds', 0)
+    
+    db.commit()
+    return db_game
+
+
+def update_room_status(db: Session, game_id: int, win: int):
+    db_game = db.query(ModelGame).filter(ModelGame.id == game_id).first()
+    db_game.win = win
+    db.commit()
+    return db_game
+
+
+# active users part
+def create_active_users(db: Session, game_id: int, users: dict[str, str]):
+    for email, role in users.items():
+        db_user = db.query(ModelUser).filter(ModelUser.email == email).first()
+        db_game = ModelActiveUser(role = role, user_id = db_user.id, game_id = game_id)
+        db.add(db_game)
+    db.commit()
+    return db.query(ModelGame).filter(ModelGame.id == game_id).first().active_users
+
+
+def get_active_user(db: Session, game_id: int, user_id: int):
+    return db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.user_id == user_id).first()
