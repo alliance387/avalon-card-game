@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 class RoomSchema(BaseModel):
     room_id:str
     code:str
+    app_id:int
 
     class Config:
         orm_mode = True
@@ -43,6 +44,18 @@ class UserLoginSchema(BaseModel):
 class SessionSchema(BaseModel):
     user_id: int
     room_id: int
+
+    class Config:
+        orm_mode = True
+
+
+# app
+class AppSchema(BaseModel):
+    access_key: str
+    secret: str
+    management_key: str
+    template_id: str
+    date_status: str
 
     class Config:
         orm_mode = True

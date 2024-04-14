@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 import uvicorn
@@ -8,13 +9,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 
 #schemas
-from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema
-# models
+from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, AppSchema
+#models
 from sql.models import ModelRoom
 # crud
-from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code
+from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
+                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key
 # utils
 from auth import JWTBearer, signJWT
+from webrtc import generateManagementToken
 
 load_dotenv('.env')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -45,6 +48,11 @@ async def root():
     return {"message": "hello world"}
 
 
+@app.get('/room/', tags=["room"])
+async def get_all_rooms_api():
+    return get_all_rooms(db.session)
+ 
+    
 @app.post('/room/', response_model=RoomSchema, tags=["room"])
 async def make_room(room: RoomSchema):
     if not get_room_by_100ms_room_id(db.session, room.room_id):
@@ -95,6 +103,29 @@ async def get_sessions(user_email: str):
     sessions_by_user = get_sessions_by_user(db.session, get_user_by_email(db.session, user_email))
     return [session.rooms_in_session for session in sessions_by_user] 
 
+
+@app.post("/apps", tags=["apps"])
+async def make_app(app: AppSchema):
+    found_app = get_app_by_access_key(db.session, app.access_key)
+    if not found_app:
+        return create_app(db.session, app)
+    else:
+        return {
+            'error': 'app exists'
+        }
+
+@app.get("/apps", tags=["apps"])
+async def get_apps():
+    return get_all_apps(db.session)
+
+
+# util 
+def get_management_token(room: ModelRoom):
+    if datetime.now().strftime('%Y-%m-%d') == room.app.date_status:
+        return room.app.management_key
+    else:
+        new_management_token = generateManagementToken(room.app.access_key, room.app.secret)
+        return update_app_management_key(db.session, room.app_id, new_management_token, datetime.now().strftime('%Y-%m-%d'))
 
 # To run locally
 if __name__ == '__main__':

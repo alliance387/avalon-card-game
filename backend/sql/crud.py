@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
 
-from .models import ModelRoom, ModelUser, ModelSession
-from .schema import UserSchema, SessionSchema, RoomSchema
+from .models import ModelRoom, ModelUser, ModelSession, ModelApp
+from .schema import UserSchema, SessionSchema, RoomSchema, AppSchema
 
 # user part
 def get_user(db: Session, user_id: int):
@@ -38,6 +38,9 @@ def create_session(db: Session, session: SessionSchema):
     return db_session
 
 # room part
+def get_all_rooms(db: Session):
+    return db.query(ModelRoom).all()
+
 def get_room_by_100ms_room_id(db: Session, ms100_room_id: str):
     return db.query(ModelRoom).filter(ModelRoom.room_id == ms100_room_id).first()
 
@@ -45,10 +48,30 @@ def get_room_by_room_code(db: Session, room_code: str):
     return db.query(ModelRoom).filter(ModelRoom.code == room_code).first()
 
 def create_room(db: Session, room: RoomSchema):
-    db_room = ModelRoom(room_id = room.room_id, code = room.code)
+    db_room = ModelRoom(room_id = room.room_id, code = room.code, app_id= room.app_id)
     db.add(db_room)
     db.commit()
     return db_room
+
+# app part
+def create_app(db: Session, app: AppSchema):
+    db_app = ModelApp(access_key = app.access_key, secret = app.secret, management_key = app.management_key, template_id = app.template_id, date_status = app.date_status)
+    db.add(db_app)
+    db.commit()
+    return db_app
+
+def get_all_apps(db: Session):
+    return db.query(ModelApp).all()
+
+def get_app_by_access_key(db: Session, access_key: str):
+    return db.query(ModelApp).filter(ModelApp.access_key == access_key).first()
+
+def update_app_management_key(db: Session, app_id: int, management_key: str, date: str):
+    db_app = db.query(ModelApp).filter(ModelApp.id == app_id).first()
+    db_app.management_key = management_key
+    db_app.date_status = date
+    db.commit()
+    return management_key
 
 # def get_items(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.Item).offset(skip).limit(limit).all()
