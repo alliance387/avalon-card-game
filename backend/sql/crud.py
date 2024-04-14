@@ -117,10 +117,10 @@ def update_room_status(db: Session, game_id: int, win: int):
 
 
 # active users part
-def create_active_users(db: Session, game_id: int, users: dict[str, str]):
-    for email, role in users.items():
+def create_active_users(db: Session, game_id: int, users: dict[str, object]):
+    for email, values in users.items():
         db_user = db.query(ModelUser).filter(ModelUser.email == email).first()
-        db_game = ModelActiveUser(role = role, user_id = db_user.id, game_id = game_id)
+        db_game = ModelActiveUser(role = values['role'], user_id = db_user.id, game_id = game_id, order = values['order'], mermaid = values['mermaid'])
         db.add(db_game)
     db.commit()
     return db.query(ModelGame).filter(ModelGame.id == game_id).first().active_users
@@ -128,3 +128,11 @@ def create_active_users(db: Session, game_id: int, users: dict[str, str]):
 
 def get_active_user(db: Session, game_id: int, user_id: int):
     return db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.user_id == user_id).first()
+
+def update_active_user_mermaid(db: Session, game_id: int, user_id: int):
+    db_user = db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.mermaid == 1).first()
+    db_user.mermaid = 2
+    db_new_mermaid = db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.user_id == user_id).first()
+    db_new_mermaid.mermaid = 1
+    db.commit()
+    return db_new_mermaid.role, db_user.email

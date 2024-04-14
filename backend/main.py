@@ -15,7 +15,7 @@ from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
                     get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
-                    get_active_user
+                    get_active_user, update_active_user_mermaid
 # utils
 from auth import JWTBearer, signJWT
 from webrtc import generateManagementToken
@@ -142,6 +142,7 @@ async def count_poll(game_id: int, accept_quest: int) -> dict[str, int]:
                 'rejected_rounds': 1
             }
 
+
 @app.post("/game/quest", tags=["games"])
 async def make_quest(game_id: int, is_success: bool, fails: int) -> dict[str, str]:
     game = update_room(db.session, game_id, {'good_win': int(is_success), 'evil_win': int(not is_success)})
@@ -183,6 +184,22 @@ async def assasin_move(game_id: int, email: str) -> dict[str, str]:
         update_room_status(db.session, game_id, 1)
         return {
             'win': 'Good'
+        }
+    
+
+@app.post("/game/mermaid_move", tags=["game"])
+async def mermaid_move(game_id: int, email: str) -> dict[str, str]:
+    new_mermaid = get_user_by_email(db.session, email)
+    active_user_info = get_active_user(db.session, game_id, new_mermaid.id)
+    if active_user_info.mermaid > 0:
+        return {
+            'warning': 'you can not change this person to mermaid'
+        }
+    else:
+        new_mermaid_role, last_mermaid_email = update_active_user_mermaid(db.session, game_id, new_mermaid.id)
+        return {
+            'role': new_mermaid_role,
+            'last_mermaid': last_mermaid_email
         }
 
 

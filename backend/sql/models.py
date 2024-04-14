@@ -67,6 +67,8 @@ class ModelActiveUser(Base):
     __tablename__ = 'activeUsers'
     id = Column(Integer, primary_key=True)
     role = Column(String, default='guest')
+    order = Column(Integer)
+    mermaid = Column(Integer, default=0)
     user_id = Column(Integer, ForeignKey('users.id'))
     game_id = Column(Integer, ForeignKey('games.id'))
 
