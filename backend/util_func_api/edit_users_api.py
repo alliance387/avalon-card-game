@@ -1,17 +1,21 @@
 from random import shuffle
 
 import requests
+import asyncio
+import aiohttp
 
-
-def update_role_users(url: str,
+async def update_role_users(url: str,
                       headers: dict,
                       payload: dict,
                       id_user: str):
 
-    requests.request("POST", url=f'{url}/peers/{id_user}', headers=headers, json=payload)
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url=f'{url}/peers/{id_user}', headers=headers, json=payload) as response:
+            print(f"Status: {response.status}")
+            print(await response.json())
 
 
-def edit_role_users(url: str,
+async def edit_role_users(url: str,
                     headers: dict,
                     id_users: list):
     roles = ['merlin', "percival", "mordred", "morgana"]
@@ -29,9 +33,11 @@ def edit_role_users(url: str,
             # for db
             chosen_user_id = next(keys_of_users)
             id_users[chosen_user_id]['role'] = role
-            # TODO: Думаю лучше будет это засунуть в асинхронку чтобы не ждать пока 5-10 ролей будем добавлять
-            update_role_users(url=url, headers=headers, payload=payload, id_user=chosen_user_id)
+            # TODO: Думаю лучше будет это засунуть в асинхронку чтобы не ждать пока 5-10 ролей будем добавлять(закинул)
+            task_update_role = asyncio.create_task(update_role_users(url=url, headers=headers, payload=payload, id_user=chosen_user_id))
+            await task_update_role
+
         
-    else:
-        # TODO: Имхо кажется лучше будет лучше убрать либо отправить ошибку
-        return print("Пользователей не достаточно")
+    # else:
+        # TODO: Имхо кажется лучше будет лучше убрать либо отправить ошибку(ну да по идеи фронт может блочитб или давать команды)
+        # return print("Пользователей не достаточно")

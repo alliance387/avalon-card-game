@@ -2,7 +2,7 @@ from random import shuffle
 
 # TODO 2: Имхо лучше наверное явно импортировать что нужно через from
 import aiohttp
-
+import asyncio
 async def get_info_users(url: str, headers: dict) -> dict[str, dict[str, str]]:
 # асинхронка хз робит ли
     # TODO: 1 лучше будет мне кажется ловить ошибки через response.status_code или явно вызывать ошибку через response.raise_for_status
@@ -13,8 +13,8 @@ async def get_info_users(url: str, headers: dict) -> dict[str, dict[str, str]]:
         async with session.get(f'{url}/peers', headers=headers) as status:
             if str(status) in arr_error:
                 return "Произошла ошибка"
-            # TODO 3: Думаю лишние скобки
-            full_info_users = (await status.json())
+            # TODO 3: Думаю лишние скобки(исправил)
+            full_info_users = await status.json()
             id_users = list(full_info_users["peers"].keys())
             shuffle(id_users)
             for idx, id_user in enumerate(id_users):
