@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
+import asyncio
 
 #schemas
 from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, AppSchema
@@ -15,10 +16,11 @@ from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
                     get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
-                    get_active_user, update_active_user_mermaid
+                    get_active_user, update_active_user_mermaid, create_game, create_active_users
 # utils
 from auth import JWTBearer, signJWT
 from webrtc import generateManagementToken
+from util_func_api import get_info_users, edit_role_users
 
 load_dotenv('.env')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -43,6 +45,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+URL_100MS = 'https://api.100ms.live/v2/'
 
 @app.get("/")
 async def root():
@@ -121,6 +125,39 @@ async def get_apps():
 
 
 # game logic
+@app.get('/game/game-info/{game_id}')
+async def get_game(game_id: int):
+    game = get_game_by_id(db.session, game_id)
+    return game
+
+
+@app.post('/game/start/{room_id}')
+async def start_game(room_id: str):
+    room = get_room_by_100ms_room_id(db.session, room_id)
+    HEADERS = {
+        'Authorization': f'Bearer {get_management_token(room)}'
+    }
+    id_users = asyncio.run(get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS))
+    game = create_game(db.session, len(id_users), room.id) # db 
+
+    edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users)
+    create_active_users(db.session, game.id, id_users)
+
+    return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
+
+
+@app.get('/game/info-users/{room_id}')
+async def read_info_users(room_id: str):
+    room = get_room_by_100ms_room_id(db.session, room_id)
+    HEADERS = {
+        'Authorization': f'Bearer {get_management_token(room)}'
+    }
+    info_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
+    return {'message': 'Ошибка'} if info_users == 'Произошла ошибка' else {"info_users": info_users}
+    # TODO 1: Лишняя строка
+    asyncio.get_event_loop().run_until_complete(read_info_users(room_id))
+
+
 @app.post("/game/poll", tags=["games"])
 async def count_poll(game_id: int, accept_quest: int) -> dict[str, int]:
     game = get_game_by_id(db.session, game_id)

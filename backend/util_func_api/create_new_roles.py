@@ -51,8 +51,7 @@ payload_create_role = {
     "maxPeerCount": 0
 }
 
-def create_new_role(headers: dict,
-                    role: str):
+def create_new_role(headers: dict, role: str) -> None:
     url = f'https://api.100ms.live/v2/templates/66127c9fbc5c70a0ac158bbc/roles/{role}'
     status = requests.request("POST", url, headers=headers, json=payload_create_role)
     print(status)
