@@ -1,34 +1,33 @@
-import random
+from random import shuffle
+
 import requests
 
+
+def update_role_users(url: str,
+                      headers: dict,
+                      payload: dict,
+                      id_user: str):
+
+    requests.request("POST", url=f'{url}/peers/{id_user}', headers=headers, json=payload)
+
+
 def edit_role_users(url: str,
-                    headers,
+                    headers: dict,
                     id_users: list):
+
     copy_id_users = id_users.copy()
-    random.shuffle(copy_id_users)
-    roles = ['guest',"guest"]
-    random.shuffle(roles)
-    if len(id_users) >= 3:
+    shuffle(copy_id_users)
+    roles = ['merlin', "percival", "mordred", "morgana"]
+    shuffle(roles)
+    if len(id_users) >= 5:
+        if len(id_users) >= 7:
+            roles.append('assasin')
+        if len(id_users) >= 9:
+            roles.append('oberon')
         for role in roles:
             payload = {
                 'role': role
             }
-            requests.post(url= f'{url}/peers/{copy_id_users.pop()}', headers=headers, json=payload)
-
-    # roles = ['Merlin', "Percival", "Mordred", "Morgana"]
-    # random.shuffle(roles)
-    # if len(id_users) >= 5:
-    #     for role in roles:
-    #         payload = {
-    #             'roles': i
-    #         }
-    #         requests.post(url= f'{url}/{copy_id_users.pop()}', headers=headers, json=payload)
-    # if len(id_users) >= 7:
-    #     payload = {'role': 'Assasin'}
-    #     requests.post(url= f'{url}/{copy_id_users.pop()}', headers=headers, json=payload)
-    # if len(id_users) >= 9:
-    #     payload = {'role': 'Oberon'}
-    #     requests.post(url= f'{url}/peers/{copy_id_users.pop()}', headers=headers, json=payload)
-
-    # else:
-    #     return print("Пользователей не достаточно")
+            update_role_users(url=url, headers=headers, payload=payload, id_user=copy_id_users.pop())
+    else:
+        return print("Пользователей не достаточно")
