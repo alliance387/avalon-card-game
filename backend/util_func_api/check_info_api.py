@@ -23,7 +23,7 @@ async def get_info_users(url: str, headers: dict) -> dict[str, dict[str, str]]:
                     'name': f'{response_info_users["name"]}',
                     'role': f'{response_info_users["role"]}',
                     'order': idx,  # for db
-                    'mermaid': 0 if len(id_users) >= idx - 1 else 1
+                    'mermaid': int(len(id_users) <= idx + 1) 
                 }
             return info_users
 

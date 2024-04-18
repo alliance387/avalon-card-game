@@ -1,43 +1,51 @@
+"""Module of working with 100ms API updating users roles"""
 from random import shuffle
 
-import requests
 import asyncio
-import aiohttp
+from aiohttp import ClientSession
+
 
 async def update_role_users(url: str,
-                      headers: dict,
-                      payload: dict,
-                      id_user: str):
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url=f'{url}/peers/{id_user}', headers=headers, json=payload) as response:
-            print(f"Status: {response.status}")
-            print(await response.json())
+                            headers: dict,
+                            payload: dict,
+                            id_user: str,
+                            session: ClientSession):
+    """
+    Couroutine for changing role
+    """
+    async with session.post(url=f'{url}/peers/{id_user}', headers=headers, json=payload) as response:
+        await response.json()
 
 
 async def edit_role_users(url: str,
-                    headers: dict,
-                    id_users: list):
+                          headers: dict,
+                          id_users: dict,
+                          is_test: bool = False):
+    """
+    Concurently change roles of peers in this room by isong 100ms API
+    """
     roles = ['merlin', "percival", "mordred", "morgana"]
     shuffle(roles)
-    keys_of_users = iter(shuffle(id_users.keys()))
-    if len(id_users) >= 5:
-        if len(id_users) >= 7:
-            roles.append('assasin')
-        if len(id_users) >= 9:
-            roles.append('oberon')
-        for role in roles:
-            payload = {
-                'role': role
-            }
-            # for db
-            chosen_user_id = next(keys_of_users)
-            id_users[chosen_user_id]['role'] = role
-            # TODO: Думаю лучше будет это засунуть в асинхронку чтобы не ждать пока 5-10 ролей будем добавлять(закинул)
-            task_update_role = asyncio.create_task(update_role_users(url=url, headers=headers, payload=payload, id_user=chosen_user_id))
-            await task_update_role
+    keys_of_users = list(id_users.keys())
+    shuffle(keys_of_users)
+    if len(id_users) >= 7:
+        roles.append('assasin')
+    if len(id_users) >= 9:
+        roles.append('oberon')
 
+    data_for_tasks = []
+    if not is_test:
+        for role in roles:
+            chosen_user_id = keys_of_users.pop()
+            id_users[chosen_user_id]['role'] = role
+            data_for_tasks.append((chosen_user_id, role))
+    else:
+        for chosen_user_id in keys_of_users:
+            id_users[chosen_user_id]['role'] = 'guest'
+            data_for_tasks.append((chosen_user_id, 'guest'))
+
+    async with ClientSession() as session:
+        tasks = [update_role_users(url, headers, {'role': role}, peer_id, session) 
+                for peer_id, role in data_for_tasks]
+        await asyncio.gather(*tasks)
         
-    # else:
-        # TODO: Имхо кажется лучше будет лучше убрать либо отправить ошибку(ну да по идеи фронт может блочитб или давать команды)
-        # return print("Пользователей не достаточно")

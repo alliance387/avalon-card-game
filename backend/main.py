@@ -16,7 +16,7 @@ from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
                     get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
-                    get_active_user, update_active_user_mermaid, create_game, create_active_users
+                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users
 # utils
 from auth import JWTBearer, signJWT
 from webrtc import generateManagementToken
@@ -128,7 +128,9 @@ async def get_apps():
 @app.get('/game/game-info/{game_id}')
 async def get_game(game_id: int):
     game = get_game_by_id(db.session, game_id)
-    return game
+    return {
+        'active_users': get_active_users(db.session, game.id)
+    }
 
 
 @app.post('/game/start/{room_id}')
@@ -137,10 +139,14 @@ async def start_game(room_id: str):
     HEADERS = {
         'Authorization': f'Bearer {get_management_token(room)}'
     }
-    id_users = asyncio.run(get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS))
+    id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
+    if len(id_users) < 5:
+        return {
+            'error': 'not a lot of users'
+        }
     game = create_game(db.session, len(id_users), room.id) # db 
 
-    edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users)
+    await edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users)
     create_active_users(db.session, game.id, id_users)
 
     return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
@@ -154,8 +160,6 @@ async def read_info_users(room_id: str):
     }
     info_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
     return {'message': 'Ошибка'} if info_users == 'Произошла ошибка' else {"info_users": info_users}
-    # TODO 1: Лишняя строка
-    asyncio.get_event_loop().run_until_complete(read_info_users(room_id))
 
 
 @app.post("/game/poll", tags=["games"])
@@ -248,6 +252,22 @@ def get_management_token(room: ModelRoom):
         new_management_token = generateManagementToken(room.app.access_key, room.app.secret)
         return update_app_management_key(db.session, room.app_id, new_management_token, datetime.now().strftime('%Y-%m-%d'))
 
+
+
+# test
+@app.post('/test/clear_room/{room_id}', tags=["test"])
+async def make_room_clear(room_id: str):
+    room = get_room_by_100ms_room_id(db.session, room_id)
+    HEADERS = {
+        'Authorization': f'Bearer {get_management_token(room)}'
+    }
+    id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
+
+    await edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users, is_test=True)
+
+    return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
+
+
 # To run locally
 if __name__ == '__main__':
-    uvicorn.run(app, host='127.0.0.1', port=8000)
+    uvicorn.run(app, host='0.0.0.0', port=8000)
