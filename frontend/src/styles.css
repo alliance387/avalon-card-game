@@ -117,7 +117,7 @@
   }
 
   .peers-container-siteitem {
-    flex-basis:50%;
+    flex-basis:70%;
     display: flex;
     flex-wrap: wrap;
   }
