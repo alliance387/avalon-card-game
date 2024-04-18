@@ -175,7 +175,7 @@ async def count_poll(game_id: int, accept_quest: int) -> dict[str, int]:
         if game.rejected_rounds >= 5:
             update_room_status(db.session, game.id, -1)
             return {
-                'win': 'Evil'
+                'win': 'evil'
             }
         else: 
             {
@@ -199,11 +199,11 @@ async def make_quest(game_id: int, is_success: bool, fails: int) -> dict[str, st
         if game.evil_win >= 3:
             update_room_status(db.session, game.id, -1)
             return {
-                'win': 'Evil'
+                'win': 'evil'
             }
         else:
             return {
-                'event': 'Assasin',
+                'event': 'assasin',
                 'fails': fails,
                 'is_quest_accepted': 0,
                 'good_win': game.good_win,
@@ -216,15 +216,15 @@ async def make_quest(game_id: int, is_success: bool, fails: int) -> dict[str, st
 async def assasin_move(game_id: int, email: str) -> dict[str, str]:
     suspected_merlin = get_user_by_email(db.session, email)
     active_user_info = get_active_user(db.session, game_id, suspected_merlin.id)
-    if active_user_info.role == 'Merlin':
+    if active_user_info.role == 'merlin':
         update_room_status(db.session, game_id, -1)
         return {
-            'win': 'Evil'
+            'win': 'evil'
         }
     else:
         update_room_status(db.session, game_id, 1)
         return {
-            'win': 'Good'
+            'win': 'good'
         }
     
 
