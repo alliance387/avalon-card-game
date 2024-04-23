@@ -159,7 +159,7 @@ async def get_game(game_id: int):
 async def start_game(room_id: str):
     room = get_room_by_100ms_room_id(db.session, room_id)
     HEADERS = {
-        'Authorization': f'Bearer {get_management_token(room)}'
+        'Authorization': f'Bearer {get_management_token(room, db)}'
     }
     id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
     if len(id_users) < 5:
@@ -178,7 +178,7 @@ async def start_game(room_id: str):
 async def read_info_users(room_id: str):
     room = get_room_by_100ms_room_id(db.session, room_id)
     HEADERS = {
-        'Authorization': f'Bearer {get_management_token(room)}'
+        'Authorization': f'Bearer {get_management_token(room, db)}'
     }
     info_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
     return {'message': 'Ошибка'} if info_users == 'Произошла ошибка' else {"info_users": info_users}

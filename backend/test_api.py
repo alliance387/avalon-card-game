@@ -8,7 +8,7 @@ from util_func_api import get_info_users, edit_role_users
 
 from sql.crud import get_room_by_100ms_room_id, update_app_management_key, delete_session_crud, get_all_users
 
-def get_test_api_calls(app, db, URL_100MS):
+def get_test_api_calls(app, db, URL_100MS) -> list[callable]:
     # test
     @app.post('/test/clear_room/{room_id}', tags=["test"])
     async def make_room_clear(room_id: str):
@@ -41,7 +41,7 @@ def get_test_api_calls(app, db, URL_100MS):
             make_room_clear]
 
 # util 
-def get_management_token(room: ModelRoom):
+def get_management_token(room: ModelRoom, db: object) -> str:
     if datetime.now().strftime('%Y-%m-%d') == room.app.date_status:
         return room.app.management_key
     else:
