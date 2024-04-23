@@ -32,8 +32,8 @@ const Routes = () => {
           element: <MainWindow/>,
         },
         {
-          path: "/profile",
-          element: <div>User Profile</div>,
+          path: "/room/:slug",
+          element: <MainWindow/>,
         },
         {
           path: "/logout",
