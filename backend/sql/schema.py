@@ -63,7 +63,6 @@ class AppSchema(BaseModel):
 
 # game
 class GameSchema(BaseModel):
-    number: int
     good_win: int
     evil_win: int
     rejected_rounds: int

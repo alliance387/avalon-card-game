@@ -12,7 +12,7 @@ import asyncio
 from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, AppSchema
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
-                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, get_game_by_id, update_room, update_room_status, \
+                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, get_game_by_id, update_room, update_room_status, get_game_by_room_id, \
                     get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user
 # utils
 from auth import JWTBearer, signJWT
@@ -158,20 +158,27 @@ async def get_game(game_id: int):
 @app.post('/game/start/{room_id}', tags=["games"])
 async def start_game(room_id: str):
     room = get_room_by_100ms_room_id(db.session, room_id)
-    HEADERS = {
-        'Authorization': f'Bearer {get_management_token(room, db)}'
-    }
-    id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
-    if len(id_users) < 5:
-        return {
-            'error': 'not a lot of users'
+    if any(game.win == 0 for game in room.games):
+        game = create_game(db.session, room.id) # db 
+        HEADERS = {
+            'Authorization': f'Bearer {get_management_token(room, db)}'
         }
-    game = create_game(db.session, len(id_users), room.id) # db 
+        id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
+        if len(id_users) < 5:
+            return {
+                'error': 'not a lot of users'
+            }
+   
 
-    await edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users)
-    create_active_users(db.session, game.id, id_users)
+        await edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users)
+        create_active_users(db.session, game.id, id_users)
 
-    return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
+        return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
+    else:
+        return {
+            'error': 'game exists',
+            'game_id': get_game_by_room_id(db.session, room.id).id
+        }
 
 
 @app.get('/game/info-users/{room_id}', tags=["games"])

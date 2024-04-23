@@ -106,6 +106,10 @@ def get_game_by_id(db: Session, game_id: int):
     return db.query(ModelGame).filter(ModelGame.id == game_id).first()
 
 
+def get_game_by_room_id(db: Session, room_id: int):
+    return db.query(ModelGame).filter(ModelGame.room_id == room_id).first()
+
+
 def update_room(db: Session, game_id: int, elements_to_change: dict[str, int]):
     db_game = db.query(ModelGame).filter(ModelGame.id == game_id).first()
 

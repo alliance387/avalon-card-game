@@ -52,7 +52,6 @@ class ModelSession(Base):
 class ModelGame(Base):
     __tablename__ = 'games'
     id = Column(Integer, primary_key=True)
-    number = Column(Integer)
     good_win = Column(Integer, default=0)
     evil_win = Column(Integer, default=0)
     rejected_rounds = Column(Integer, default=0)
