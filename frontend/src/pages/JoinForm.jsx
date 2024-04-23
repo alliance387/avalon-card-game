@@ -2,6 +2,7 @@ import axios from "axios";
 import { useHMSActions } from "@100mslive/react-sdk";
 import { useState, useEffect } from "react";
 import { useAuth } from "../provider/authProvider";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://avalon-card-game.onrender.com";
 
@@ -19,12 +20,15 @@ function Join({token, localEmail}) {
     }));
   };
 
+  const navigate = useNavigate();
+
   const [sessionRooms, setSessionRooms] = useState([]);
 
   const enterToRoom = async (room_code) => {
     const authToken = await hmsActions.getAuthTokenByRoomCode({ roomCode: room_code });
     try {
       await hmsActions.join({ userName: localEmail, authToken});
+      navigate(`/room/${room_code}`, { replace: true });
     } catch(e){
       console.log(e);
     }
@@ -43,6 +47,7 @@ function Join({token, localEmail}) {
       axios({method: 'post', url: API_URL + `/session`, params: {room_code: roomCode, user_email: localEmail}, headers:{"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
       .then((response) => {
         console.log(response.data);
+        navigate(`/room/${roomCode}`, { replace: true });
       }).catch(e => {
         console.log(e);
       });
@@ -62,6 +67,7 @@ function Join({token, localEmail}) {
       .then((response) => {
         console.log(response);
         setSessionRooms(response.data);
+        
       }).catch(e => {
         console.log(e);
       });

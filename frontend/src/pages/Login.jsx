@@ -103,7 +103,7 @@ const Login = () => {
         </form>
         
       </div>
-      <h2><a href="/register">Sign up</a></h2>
+      <h2 className="sign-up-link"><a href="/register">Sign up</a></h2>
     </div>
   );
 };

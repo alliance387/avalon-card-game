@@ -120,7 +120,7 @@ const Register = () => {
           )}
         </form>
       </div>
-      <h2><a href="/login">Login</a></h2>
+      <h2 className="login-link"><a href="/login">Login</a></h2>
     </div>
   );
 };

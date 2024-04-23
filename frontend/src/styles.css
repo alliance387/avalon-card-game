@@ -18,6 +18,11 @@
   h5 {
     font-weight: normal;
   }
+
+  a{
+    text-decoration: none;
+    color: white;
+  }
   
   header {
     padding: 10px;
@@ -112,7 +117,7 @@
   }
 
   .peers-container-siteitem {
-    flex-basis:50%;
+    flex-basis:70%;
     display: flex;
     flex-wrap: wrap;
   }
@@ -134,6 +139,10 @@
     position:absolute;
     z-index:9;
     margin: 4px;
+
+  }
+  .button-start :hover{
+    cursor: pointer;
   }
   
   .local.peer-video {
@@ -190,4 +199,41 @@
   .separator {
     font-size: 12px;
   }
-  
+  .sign-up-link a{
+    background-color: #1565c0;
+    border: 1px solid #0000;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 7px 25px;
+  }
+  .sign-up-link{
+    text-align: center;
+  }
+  .login-link a{
+    background-color: #1565c0;
+    border: 1px solid #0000;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 7px 25px;
+  }
+  .login-link{
+    text-align: center;
+  }
+  .form-control{
+    margin: 3px 0;
+  }
+  .img-role{/*для 20%* картинка*/
+    margin: 4px;
+    position: absolute;
+    z-index: 9;
+    right: 2px;
+    top: 2px;
+    border-radius: 8px;
+  }
+  .img-role :hover{
+    cursor: pointer;
+  }
