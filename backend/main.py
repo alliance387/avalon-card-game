@@ -16,7 +16,7 @@ from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
                     get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
-                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users
+                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user
 # utils
 from auth import JWTBearer, signJWT
 from webrtc import generateManagementToken
@@ -90,18 +90,22 @@ async def user_login(user: UserLoginSchema):
 @app.post("/session", dependencies=[Depends(JWTBearer())], tags=["session"])
 async def make_session(room_code: str, user_email: str):
     found_user = get_user_by_email(db.session, user_email)
-    if found_user:
-        found_room = get_room_by_room_code(db.session, room_code)
-        if found_room:
-            return create_session(db.session, SessionSchema(room_id=found_room.id, user_id=found_user.id))
-        else:
-            return {
-                'warning': 'Session by this user exists'
-            }
-    else:
+    if not found_user:
         return {
             'error': 'user not found'
         }
+    found_room = get_room_by_room_code(db.session, room_code)
+    if not found_room:
+        return {
+            'error': 'room not found'
+        }
+    if not get_session_by_room_and_user(db.session, found_user.id, found_room.id):
+        return create_session(db.session, SessionSchema(room_id=found_room.id, user_id=found_user.id))
+    else:
+        return {
+            'warning': 'session exists'
+        }
+    
 
 @app.get("/session", dependencies=[Depends(JWTBearer())], tags=["session"])
 async def get_sessions(user_email: str):
@@ -125,7 +129,7 @@ async def get_apps():
 
 
 # game logic
-@app.get('/game/game-info/{game_id}')
+@app.get('/game/game-info/{game_id}', tags=["games"])
 async def get_game(game_id: int):
     game = get_game_by_id(db.session, game_id)
     return {
@@ -133,7 +137,7 @@ async def get_game(game_id: int):
     }
 
 
-@app.post('/game/start/{room_id}')
+@app.post('/game/start/{room_id}', tags=["games"])
 async def start_game(room_id: str):
     room = get_room_by_100ms_room_id(db.session, room_id)
     HEADERS = {
@@ -152,7 +156,7 @@ async def start_game(room_id: str):
     return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
 
 
-@app.get('/game/info-users/{room_id}')
+@app.get('/game/info-users/{room_id}', tags=["games"])
 async def read_info_users(room_id: str):
     room = get_room_by_100ms_room_id(db.session, room_id)
     HEADERS = {
