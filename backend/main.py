@@ -16,7 +16,7 @@ from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
                     get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
-                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user
+                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user, delete_session_crud
 # utils
 from auth import JWTBearer, signJWT
 from webrtc import generateManagementToken
@@ -271,6 +271,10 @@ async def make_room_clear(room_id: str):
 
     return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
 
+
+@app.post('/test/delete_session', tags=["test", "session"])
+async def make_room_clear(room_id: int, user_id: int):
+    return delete_session_crud(db.session, user_id, room_id)
 
 # To run locally
 if __name__ == '__main__':

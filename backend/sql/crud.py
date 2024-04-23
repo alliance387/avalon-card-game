@@ -32,8 +32,16 @@ def get_sessions_by_user(db: Session, user: UserSchema):
 def get_sessions_by_room(db: Session, room: RoomSchema):
     return db.query(ModelSession).filter(ModelSession.room_id == room.id).all()
 
+
 def get_session_by_room_and_user(db: Session, user_id: int, room_id: int):
     return db.query(ModelSession).filter(ModelSession.user_id == user_id, ModelSession.room_id == room_id).first()
+
+
+def delete_session_crud(db: Session, user_id: int, room_id: int):
+    db_session = db.query(ModelSession).filter(ModelSession.user_id == user_id, ModelSession.room_id == room_id).first()
+    db.delete(db_session)
+    db.commit()
+    return get_session_by_room_and_user(db, user_id, room_id)
 
 
 def create_session(db: Session, session: SessionSchema):
