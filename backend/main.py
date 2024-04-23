@@ -17,7 +17,7 @@ from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, 
 # utils
 from auth import JWTBearer, signJWT
 from util_func_api import get_info_users, edit_role_users
-from test_api import get_test_api_calls
+from test_api import get_test_api_calls, get_management_token
 
 load_dotenv('.env')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
