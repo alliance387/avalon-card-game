@@ -5,16 +5,16 @@ from .models import ModelRoom, ModelUser, ModelSession, ModelApp, ModelGame, Mod
 from .schema import UserSchema, SessionSchema, RoomSchema, AppSchema, GameSchema, ActiveUserSchema
 
 # user part
+def get_all_users(db: Session):
+    return db.query(ModelUser).all()
+
+
 def get_user(db: Session, user_id: int):
     return db.query(ModelUser).filter(ModelUser.id == user_id).first()
 
 
 def get_user_by_email(db: Session, email: str):
     return db.query(ModelUser).filter(ModelUser.email == email).first()
-
-
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(ModelUser).offset(skip).limit(limit).all()
 
 
 def create_user(db: Session, user: UserSchema, hashed_password: str):

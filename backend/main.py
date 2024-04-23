@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 from dotenv import load_dotenv
 import uvicorn
@@ -11,16 +10,14 @@ import asyncio
 
 #schemas
 from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, AppSchema
-#models
-from sql.models import ModelRoom
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
-                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, update_app_management_key, get_game_by_id, update_room, update_room_status, \
-                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user, delete_session_crud
+                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, get_game_by_id, update_room, update_room_status, \
+                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user
 # utils
 from auth import JWTBearer, signJWT
-from webrtc import generateManagementToken
 from util_func_api import get_info_users, edit_role_users
+from test_api import get_test_api_calls
 
 load_dotenv('.env')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -129,6 +126,27 @@ async def get_apps():
 
 
 # game logic
+@app.post('/game/enter_room', tags=["games"])
+async def enter_room_pass(room_code: str, user_email: str):
+    found_room = get_room_by_room_code(db.session, room_code)
+    found_user = get_user_by_email(db.session, user_email)
+    
+    if any(game.win == 0 for game in found_room.games):
+        if any(lobby.game.room_id == found_room.id for lobby in found_user.active_in_lobbies):
+            return {
+                'event': 'reenter'
+            }   
+        else:
+            return {
+                'error': 'match is going on'
+            }
+    else:
+        return {
+            'event': 'enter'
+        }
+
+
+
 @app.get('/game/game-info/{game_id}', tags=["games"])
 async def get_game(game_id: int):
     game = get_game_by_id(db.session, game_id)
@@ -232,7 +250,7 @@ async def assasin_move(game_id: int, email: str) -> dict[str, str]:
         }
     
 
-@app.post("/game/mermaid_move", tags=["game"])
+@app.post("/game/mermaid_move", tags=["games"])
 async def mermaid_move(game_id: int, email: str) -> dict[str, str]:
     new_mermaid = get_user_by_email(db.session, email)
     active_user_info = get_active_user(db.session, game_id, new_mermaid.id)
@@ -247,34 +265,7 @@ async def mermaid_move(game_id: int, email: str) -> dict[str, str]:
             'last_mermaid': last_mermaid_email
         }
 
-
-# util 
-def get_management_token(room: ModelRoom):
-    if datetime.now().strftime('%Y-%m-%d') == room.app.date_status:
-        return room.app.management_key
-    else:
-        new_management_token = generateManagementToken(room.app.access_key, room.app.secret)
-        return update_app_management_key(db.session, room.app_id, new_management_token, datetime.now().strftime('%Y-%m-%d'))
-
-
-
-# test
-@app.post('/test/clear_room/{room_id}', tags=["test"])
-async def make_room_clear(room_id: str):
-    room = get_room_by_100ms_room_id(db.session, room_id)
-    HEADERS = {
-        'Authorization': f'Bearer {get_management_token(room)}'
-    }
-    id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
-
-    await edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users, is_test=True)
-
-    return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
-
-
-@app.post('/test/delete_session', tags=["test", "session"])
-async def make_room_clear(room_id: int, user_id: int):
-    return delete_session_crud(db.session, user_id, room_id)
+get_test_api_calls(app, db, URL_100MS)
 
 # To run locally
 if __name__ == '__main__':
