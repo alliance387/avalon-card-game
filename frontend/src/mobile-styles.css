@@ -96,7 +96,7 @@
   .conference-section {
     display: flex;
     margin: 0 auto;
-    max-width: 1700px;
+    max-width: 375px;
   }
   
   .conference-section h2 {
@@ -236,4 +236,7 @@
   }
   .img-role:hover{
     cursor: pointer;
+  }
+  .logo{
+    width: 17%;
   }
