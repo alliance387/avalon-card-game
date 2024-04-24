@@ -139,7 +139,7 @@
     position:absolute;
     z-index:9;
     margin: 4px;
-
+    width: 20%;
   }
   .button-start:hover{
     cursor: pointer;
@@ -178,12 +178,12 @@
   }
   
   .btn-control {
-    font-size: 12px;
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 1px;
     border: 2px solid #37474f;
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     text-align: center;
     background-color: #607d8b;
