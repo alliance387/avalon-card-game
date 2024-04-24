@@ -1,5 +1,5 @@
 import JoinForm from "./JoinForm";
-import "../mobile-styles.css";
+import "../styles.css";
 import Conference from "./Conference";
 import { useEffect } from "react";
 import {
