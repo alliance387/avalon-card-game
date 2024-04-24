@@ -112,8 +112,8 @@
     justify-content: center;
   }
   .main-item{
-    width: 350px;
-    height: 400px;
+    height: 100px;
+    width: 175px;
   }
 
   .peers-container-siteitem {
@@ -123,8 +123,8 @@
   }
 
   .item{
-    width: 300px;
-    height: 250px;
+    width: 50px;
+    height: 50px;
     margin: 10px 10px;
   }
   
@@ -150,7 +150,7 @@
   }
   
   .peer-name {
-    font-size: 20px;
+    font-size: 10px;
     text-align: center;
   }
   
