@@ -110,6 +110,10 @@ def get_game_by_room_id(db: Session, room_id: int):
     return db.query(ModelGame).filter(ModelGame.room_id == room_id).first()
 
 
+def get_games_by_room_id(db: Session, room_id: int, status: int=0):
+    return db.query(ModelGame).filter(ModelGame.room_id == room_id, ModelGame.win == status).all()
+
+
 def update_room(db: Session, game_id: int, elements_to_change: dict[str, int]):
     db_game = db.query(ModelGame).filter(ModelGame.id == game_id).first()
 
@@ -122,6 +126,13 @@ def update_room(db: Session, game_id: int, elements_to_change: dict[str, int]):
     
     db.commit()
     return db_game
+
+
+def delete_game(db: Session, game_id: int):
+    db_game = db.query(ModelGame).filter(ModelGame.id == game_id).first()
+    db.delete(db_game)
+    db.commit()
+    return None
 
 
 def update_room_status(db: Session, game_id: int, win: int):
