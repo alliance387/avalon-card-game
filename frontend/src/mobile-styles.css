@@ -96,7 +96,7 @@
   .conference-section {
     display: flex;
     margin: 0 auto;
-    max-width: 1700px;
+    max-width: 375px;
   }
   
   .conference-section h2 {
@@ -112,8 +112,8 @@
     justify-content: center;
   }
   .main-item{
-    width: 350px;
-    height: 400px;
+    height: 200px;
+    width: 175px;
   }
 
   .peers-container-siteitem {
@@ -123,9 +123,9 @@
   }
 
   .item{
-    width: 300px;
-    height: 250px;
-    margin: 10px 10px;
+    width: 90px;
+    height: 100px;
+    margin: 1px;
   }
   
   .peer-video {
@@ -139,7 +139,7 @@
     position:absolute;
     z-index:9;
     margin: 4px;
-
+    width: 20%;
   }
   .button-start:hover{
     cursor: pointer;
@@ -150,7 +150,7 @@
   }
   
   .peer-name {
-    font-size: 20px;
+    font-size: 10px;
     text-align: center;
   }
   
@@ -178,12 +178,12 @@
   }
   
   .btn-control {
-    font-size: 12px;
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 1px;
     border: 2px solid #37474f;
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     text-align: center;
     background-color: #607d8b;
@@ -236,4 +236,7 @@
   }
   .img-role:hover{
     cursor: pointer;
+  }
+  .logo{
+    width: 17%;
   }
