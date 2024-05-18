@@ -75,6 +75,12 @@ function Conference() {
     else if (gameStage === "Game") {
       // Show Game
       alert('5');
+
+      // Polling time
+      
+
+      // After getting people
+
     }
     
   }, [gameStage]);
@@ -86,6 +92,7 @@ function Conference() {
 
 
   return (
+    <>
     <div className="conference-section">
       {filteredPeers.filter(peer => peer.isLocal).length !== 0 ? (<>
       <div className="peers-container-main">
@@ -108,7 +115,11 @@ function Conference() {
       </div>
       </>): <></>}
     </div>
-  );
+    <div className="conference-section">
+      <img src="success_mission_card.png" alt=""/>
+      <img src="fail_mission_card.png" alt="" />
+    </div>
+  </>);
 }
 
 export default Conference;
