@@ -12,8 +12,9 @@ import asyncio
 from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, AppSchema
 # crud
 from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
-                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, get_game_by_id, update_room, update_room_status, get_game_by_room_id, \
-                    get_active_user, update_active_user_mermaid, create_game, create_active_users, get_active_users, get_session_by_room_and_user
+                    get_all_apps, create_app, get_app_by_access_key, get_all_rooms, get_game_by_id, update_room, update_room_status, get_game_by_room_id_and_non_started, \
+                    get_active_user, update_active_user_mermaid, create_game, update_active_users, get_active_users, get_session_by_room_and_user, get_game_by_room_id_and_started, \
+                    create_active_user, update_state, update_start_game
 # utils
 from auth import JWTBearer, signJWT
 from util_func_api import get_info_users, edit_role_users
@@ -131,19 +132,30 @@ async def enter_room_pass(room_code: str, user_email: str):
     found_room = get_room_by_room_code(db.session, room_code)
     found_user = get_user_by_email(db.session, user_email)
     
-    if any(game.win == 0 for game in found_room.games):
+    if any(game.win == 2 for game in found_room.games):
         if any(lobby.game.room_id == found_room.id for lobby in found_user.active_in_lobbies):
             return {
-                'event': 'reenter'
+                'event': 'reenter',
+                'game_id': game.id
             }   
         else:
             return {
                 'error': 'match is going on'
             }
     else:
+        if any(game.win == 0 for game in found_room.games):
+            game = create_game(db.session, found_room.id)
+        else:
+            # TODO: BETTER got without db 
+            game = get_game_by_room_id_and_non_started(db.session, found_room.id)
+
+        create_active_user(db.session, game.id, found_user.id)
+
         return {
-            'event': 'enter'
+            'event': 'enter',
+            'game_id': game.id
         }
+
 
 
 
@@ -154,31 +166,27 @@ async def get_game(game_id: int):
         'active_users': get_active_users(db.session, game.id)
     }
 
+@app.post('/game/change_state/{game_id}', tags=["games"])
+async def change_state(game_id: int, user_email: str):
+    found_user = get_user_by_email(db.session, user_email)
+    count_states = update_state(db.session, game_id, found_user.id)
+    game = get_game_by_id(db.session, game_id)
 
-@app.post('/game/start/{room_id}', tags=["games"])
-async def start_game(room_id: str):
-    room = get_room_by_100ms_room_id(db.session, room_id)
-    if any(game.win == 0 for game in room.games):
-        game = create_game(db.session, room.id) # db 
+    # Start game
+    if game.win == 0 and count_states >= 5:
+        update_start_game(db.session, game.id)
+
         HEADERS = {
-            'Authorization': f'Bearer {get_management_token(room, db)}'
+            'Authorization': f'Bearer {get_management_token(game.room.room_id, db)}'
         }
-        id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS)
-        if len(id_users) < 5:
-            return {
-                'error': 'not a lot of users'
-            }
-   
+        id_users = await get_info_users(url=f'{URL_100MS}active-rooms/{game.room.room_id}', headers=HEADERS)
 
-        await edit_role_users(url=f'{URL_100MS}active-rooms/{room_id}', headers=HEADERS, id_users=id_users)
-        create_active_users(db.session, game.id, id_users)
+        await edit_role_users(url=f'{URL_100MS}active-rooms/{game.room.room_id}', headers=HEADERS, id_users=id_users)
+        update_active_users(db.session, game.id, id_users)
 
-        return {'message': 'Ошибка'} if id_users == 'Произошла ошибка' else {"info_users": id_users}
-    else:
-        return {
-            'error': 'game exists',
-            'game_id': get_game_by_room_id(db.session, room.id).id
-        }
+    return {
+        'event': 'changed'
+    }
 
 
 @app.get('/game/info-users/{room_id}', tags=["games"])
