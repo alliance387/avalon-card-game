@@ -68,6 +68,8 @@ class ModelActiveUser(Base):
     role = Column(String, default='guest')
     order = Column(Integer)
     mermaid = Column(Integer, default=0)
+    state = Column(Integer, default=0)
+    mission = Column(Integer, default=0)
     user_id = Column(Integer, ForeignKey('users.id'))
     game_id = Column(Integer, ForeignKey('games.id'))
 

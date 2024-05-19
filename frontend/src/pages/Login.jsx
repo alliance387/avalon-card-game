@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../provider/authProvider";
 
 import React, { useState, useRef } from "react";
-import { selectLocalPeer } from "@100mslive/react-sdk";
 
 const required = value => {
     if (!value) {
@@ -25,7 +24,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -92,14 +90,6 @@ const Login = () => {
               <span>Login</span>
             </button>
           </div>
-
-          {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
-              </div>
-            </div>
-          )}
         </form>
         
       </div>

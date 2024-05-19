@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../provider/authProvider";
 
 import React, { useState, useRef } from "react";
-import { selectLocalPeer } from "@100mslive/react-sdk";
 
 const required = value => {
     if (!value) {
@@ -26,7 +25,6 @@ const Register = () => {
   const [full_name, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -110,14 +108,6 @@ const Register = () => {
               <span>Register</span>
             </button>
           </div>
-
-          {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
-              </div>
-            </div>
-          )}
         </form>
       </div>
       <h2 className="login-link"><a href="/login">Login</a></h2>

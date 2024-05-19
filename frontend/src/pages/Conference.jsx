@@ -43,10 +43,11 @@ function Conference() {
   }
 
   useEffect(() => {
+    console.log(main_focus_peer);
     if (gameStage === "") {
       if (Object.values(decision_array).filter((status) => status == true).length >= 5){
         // TODO axios to start game
-        setGameStage("Evil");
+        // setGameStage("Evil");
         alert('1');
       }
     }
@@ -116,8 +117,8 @@ function Conference() {
       </>): <></>}
     </div>
     <div className="conference-section">
-      <img src="success_mission_card.png" alt=""/>
-      <img src="fail_mission_card.png" alt="" />
+      <img src="/success_mission_card.png" alt=""/>
+      <img src="/fail_mission_card.png" alt="" />
     </div>
   </>);
 }
