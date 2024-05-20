@@ -164,7 +164,7 @@ def create_active_user(db: Session, game_id: int, user_id: int):
 
 def update_state(db: Session, game_id: int, user_id: int):
     db_active_user = db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.user_id == user_id).first()
-    db_active_user.state = 1 if db_active_user.state else 0
+    db_active_user.state = 0 if db_active_user.state else 1
     db.commit()
     db_states = db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.state == 1).all()
     return len(db_states)
