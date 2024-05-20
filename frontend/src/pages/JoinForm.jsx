@@ -27,8 +27,13 @@ function Join({token, localEmail}) {
   const enterToRoom = async (room_code) => {
     const authToken = await hmsActions.getAuthTokenByRoomCode({ roomCode: room_code });
     try {
-      await hmsActions.join({ userName: localEmail, authToken});
-      navigate(`/room/${room_code}`, { replace: true });
+      axios({method: 'post', url: API_URL + `/game/enter_room`, params: {room_code: room_code, user_email: localEmail}})
+      .then((response) => {
+        if (response.data.event === 'enter' || response.data.event === 'reenter'){
+          navigate(`/room/${room_code}`, { replace: true });
+          hmsActions.join({ userName: localEmail, authToken})
+        }
+      });
     } catch(e){
       console.log(e);
     }
@@ -47,11 +52,19 @@ function Join({token, localEmail}) {
       axios({method: 'post', url: API_URL + `/session`, params: {room_code: roomCode, user_email: localEmail}, headers:{"Authorization" : `Bearer ${token}`, 'accept': 'application/json'}})
       .then((response) => {
         console.log(response.data);
-        navigate(`/room/${roomCode}`, { replace: true });
       }).catch(e => {
         console.log(e);
+      }).then(() => {
+        axios({method: 'post', url: API_URL + `/game/enter_room`, params: {room_code: roomCode, user_email: localEmail}})
+        .then((response) => {
+          if (response.data.event === 'enter' || response.data.event === 'reenter'){
+            navigate(`/room/${roomCode}`, { replace: true });
+            hmsActions.join({ userName: localEmail, authToken})
+          }
+        })
+        
       });
-      await hmsActions.join({ userName: localEmail, authToken});
+      
     } catch (e) {
       console.error(e);
     }
