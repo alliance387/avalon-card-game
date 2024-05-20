@@ -155,9 +155,11 @@ def update_room_status(db: Session, game_id: int, win: int):
 # active users part
 def create_active_user(db: Session, game_id: int, user_id: int):
     db_game = db.query(ModelGame).filter(ModelGame.id == game_id).first()
-    db_active_user = ModelActiveUser(user_id = user_id, game_id = game_id, order = len(db_game.active_users))
-    db.add(db_active_user)
-    db.commit()
+    db_active_user = db.query(ModelActiveUser).filter(ModelActiveUser.user_id == user_id, ModelActiveUser.game_id == game_id).first()
+    if not db_active_user:
+        db_active_user = ModelActiveUser(user_id = user_id, game_id = game_id, order = len(db_game.active_users))
+        db.add(db_active_user)
+        db.commit()
 
 
 def update_state(db: Session, game_id: int, user_id: int):
