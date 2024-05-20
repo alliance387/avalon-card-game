@@ -143,7 +143,7 @@ async def enter_room_pass(room_code: str, user_email: str):
                 'error': 'match is going on'
             }
     else:
-        if any(game.win == 0 for game in found_room.games):
+        if all(game.win != 0 for game in found_room.games):
             game = create_game(db.session, found_room.id)
         else:
             # TODO: BETTER got without db 
