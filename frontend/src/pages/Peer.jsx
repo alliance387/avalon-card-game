@@ -6,7 +6,7 @@ function Peer({ peer, is_selected, changeDecision }) {
   });
   return (
     <div className="peer-container">
-      <img class ="button-start"src={is_selected ? "/gold_coin.png" : "/grey_coin.png"} alt="" width="10%" onClick={() => changeDecision(peer.id)}/>
+      <img class ="button-start"src={is_selected ? "/gold_coin.png" : "/grey_coin.png"} alt="" width="10%" onClick={() => changeDecision(peer)}/>
       
       <img class="img-role" src="/Oberon.jpg" alt="" width="20%" />
 
