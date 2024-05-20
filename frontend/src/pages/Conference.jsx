@@ -2,8 +2,11 @@ import { selectPeers, useHMSStore } from "@100mslive/react-sdk";
 import { useEffect, useState } from "react";
 import Peer from "./Peer";
 import {battleField, evil_dudes} from "../data/players";
+import axios from "axios";
 
-function Conference() {
+const API_URL = "https://avalon-card-game.onrender.com";
+
+function Conference({gameId}) {
   const peers = useHMSStore(selectPeers);
 
   const [gameStage, setGameStage] = useState("");
@@ -34,11 +37,18 @@ function Conference() {
     const next_value = decision === 0 ? 1 : 0;
     if (peer.isLocal)
     {
-      set_decision(next_value);
+      axios({method: 'post', url: API_URL + `/game/change_state`, data: {game_id: gameId, user_email: peer.name}})
+      .then((response) => {
+        if (response.data.event === 'changed'){
+          set_decision(next_value);
+        }
+      });
+      
     }
   }
 
   useEffect(() => {
+    console.log(gameId);
     if (gameStage === "") {
         // TODO axios to start game
         // setGameStage("Evil");

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://avalon-card-game.onrender.com";
 
-function Join({token, localEmail}) {
+function Join({token, localEmail, setGameId}) {
 
   const hmsActions = useHMSActions();
   const [inputValues, setInputValues] = useState({
@@ -30,6 +30,7 @@ function Join({token, localEmail}) {
       axios({method: 'post', url: API_URL + `/game/enter_room`, params: {room_code: room_code, user_email: localEmail}})
       .then((response) => {
         if (response.data.event === 'enter' || response.data.event === 'reenter'){
+          setGameId(response.data.game_id);
           navigate(`/room/${room_code}`, { replace: true });
           hmsActions.join({ userName: localEmail, authToken})
         }
@@ -58,6 +59,7 @@ function Join({token, localEmail}) {
         axios({method: 'post', url: API_URL + `/game/enter_room`, params: {room_code: roomCode, user_email: localEmail}})
         .then((response) => {
           if (response.data.event === 'enter' || response.data.event === 'reenter'){
+            setGameId(response.data.game_id);
             navigate(`/room/${roomCode}`, { replace: true });
             hmsActions.join({ userName: localEmail, authToken})
           }
