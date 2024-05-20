@@ -13,7 +13,12 @@ function Conference({gameId}) {
   const [filteredPeers, setFilteredPeers] = useState(peers);
 
   // Getting info
+  const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
+    axios({method: 'get', url: API_URL + `/game/game_info`, params: {game_id: gameId}})
+    .then((response) => {
+      setUserInfo(response.data.active_users);
+    });
   }, []);
   
 
