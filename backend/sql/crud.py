@@ -95,8 +95,8 @@ def update_app_management_key(db: Session, app_id: int, management_key: str, dat
 
 
 # game part
-def create_game(db: Session, number: int, room_id: int):
-    db_game = ModelGame(number = number, room_id = room_id)
+def create_game(db: Session, room_id: int):
+    db_game = ModelGame(room_id = room_id)
     db.add(db_game)
     db.commit()
     return db_game
