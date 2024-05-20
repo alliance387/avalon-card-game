@@ -37,7 +37,7 @@ def get_test_api_calls(app, db, URL_100MS) -> list[callable]:
 
 
     # test games
-    @app.post('/test/games_by_room', tags=["test-game"])
+    @app.get('/test/games_by_room', tags=["test-game"])
     async def show_all_games_by_room(room_key: str):
         actual_room_id = get_room_by_room_code(db.session, room_key)
         return get_games_by_room_id(db.session, actual_room_id.id)
