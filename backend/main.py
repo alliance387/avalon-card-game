@@ -167,10 +167,9 @@ async def get_game(game_id: int):
             active_user.user.email: 
             {
                 'user_id': active_user.user_id,
-                'name': active_user.user.email,
                 'order': active_user.order,
                 'state': active_user.state,
-                'armed': active_user.state,
+                'armed': active_user.armed,
                 'mermaid': active_user.mermaid,
                 'mission': active_user.mission
             } for active_user in get_active_users(db.session, game.id)
