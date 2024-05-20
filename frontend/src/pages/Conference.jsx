@@ -15,9 +15,10 @@ function Conference({gameId}) {
   // Getting info
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
-    axios({method: 'get', url: API_URL + `/game/game_info`, params: {game_id: gameId}})
+    axios({method: 'get', url: API_URL + `/game/game-info`, params: {game_id: gameId}})
     .then((response) => {
       setUserInfo(response.data.active_users);
+      console.log(response.data.active_users);
     });
   }, []);
   
@@ -47,7 +48,7 @@ function Conference({gameId}) {
       axios({method: 'post', url: API_URL + `/game/change_state`, params: {game_id: gameId, user_email: peer.name}})
       .then((response) => {
         if (response.data.event === 'changed'){
-          set_decision(next_value);
+          // set_decision(next_value);
         }
       });
       
@@ -110,7 +111,7 @@ function Conference({gameId}) {
         
           {filteredPeers.filter(outer_peer => outer_peer.id === main_focus_peer).map(peer => (
             <div className="main-item">
-            <Peer key={peer.id} peer={peer} is_selected={decision} changeDecision={changeDecision}/> 
+            <Peer key={peer.id} peer={peer} is_selected={0} changeDecision={changeDecision}/> 
             </div>
           ))}
         </div>
@@ -118,7 +119,7 @@ function Conference({gameId}) {
           {
             filteredPeers.filter(peer => peer.id !== main_focus_peer).map(peer => (
               <div className="item" onClick={() => changeMainFocus(peer.id)}>
-                <Peer key={peer.id} peer={peer} is_selected={decision} changeDecision={changeDecision}/>
+                <Peer key={peer.id} peer={peer} is_selected={0} changeDecision={changeDecision}/>
               </div>
             ))
           }
