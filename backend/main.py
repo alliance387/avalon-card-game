@@ -51,12 +51,12 @@ async def root():
     return {"message": "hello world"}
 
 
-@app.get('/room/', tags=["room"])
+@app.get('/room', tags=["room"])
 async def get_all_rooms_api():
     return get_all_rooms(db.session)
  
     
-@app.post('/room/', response_model=RoomSchema, tags=["room"])
+@app.post('/room', response_model=RoomSchema, tags=["room"])
 async def make_room(room: RoomSchema):
     if not get_room_by_100ms_room_id(db.session, room.room_id):
         return create_room(db.session, room)
@@ -159,7 +159,7 @@ async def enter_room_pass(room_code: str, user_email: str):
 
 
 
-@app.get('/game/game-info/{game_id}', tags=["games"])
+@app.get('/game/game-info', tags=["games"])
 async def get_game(game_id: int):
     game = get_game_by_id(db.session, game_id)
     return {
@@ -167,7 +167,7 @@ async def get_game(game_id: int):
         'game': game
     }
 
-@app.post('/game/change_state/{game_id}', tags=["games"])
+@app.post('/game/change_state', tags=["games"])
 async def change_state(game_id: int, user_email: str):
     found_user = get_user_by_email(db.session, user_email)
     count_states = update_state(db.session, game_id, found_user.id)
@@ -190,7 +190,7 @@ async def change_state(game_id: int, user_email: str):
     }
 
 
-@app.get('/game/info-users/{room_id}', tags=["games"])
+@app.get('/game/info-users', tags=["games"])
 async def read_info_users(room_id: str):
     room = get_room_by_100ms_room_id(db.session, room_id)
     HEADERS = {
