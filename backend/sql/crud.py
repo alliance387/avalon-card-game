@@ -183,8 +183,10 @@ def update_active_users(db: Session, game_id: int, users: dict[str, object]):
 def get_active_user(db: Session, game_id: int, user_id: int):
     return db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.user_id == user_id).first()
 
+
 def get_active_users(db: Session, game_id: int):
-    return db.query(ModelActiveUser).all()
+    return db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id).all()
+
 
 def update_active_user_mermaid(db: Session, game_id: int, user_id: int):
     db_user = db.query(ModelActiveUser).filter(ModelActiveUser.game_id == game_id, ModelActiveUser.mermaid == 1).first()
