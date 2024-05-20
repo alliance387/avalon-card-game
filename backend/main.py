@@ -146,7 +146,7 @@ async def enter_room_pass(room_code: str, user_email: str):
         if all(game.win != 0 for game in found_room.games):
             game = create_game(db.session, found_room.id)
         else:
-            # TODO: BETTER got without db 
+            # TODO: BETTER got without db
             game = get_game_by_room_id_and_non_started(db.session, found_room.id)
 
         create_active_user(db.session, game.id, found_user.id)
@@ -163,7 +163,8 @@ async def enter_room_pass(room_code: str, user_email: str):
 async def get_game(game_id: int):
     game = get_game_by_id(db.session, game_id)
     return {
-        'active_users': get_active_users(db.session, game.id)
+        'active_users': get_active_users(db.session, game.id),
+        'game': game
     }
 
 @app.post('/game/change_state/{game_id}', tags=["games"])
