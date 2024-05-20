@@ -163,15 +163,18 @@ async def enter_room_pass(room_code: str, user_email: str):
 async def get_game(game_id: int):
     game = get_game_by_id(db.session, game_id)
     return {
-        'active_users': [{
-            'user_id': active_user.user_id,
-            'name': active_user.user.email,
-            'order': active_user.order,
-            'state': active_user.state,
-            'armed': active_user.state,
-            'mermaid': active_user.mermaid,
-            'mission': active_user.mission
-        } for active_user in get_active_users(db.session, game.id)],
+        'active_users': {
+            active_user.user.email: 
+            {
+                'user_id': active_user.user_id,
+                'name': active_user.user.email,
+                'order': active_user.order,
+                'state': active_user.state,
+                'armed': active_user.state,
+                'mermaid': active_user.mermaid,
+                'mission': active_user.mission
+            } for active_user in get_active_users(db.session, game.id)
+            },
         'game': game
     }
 
