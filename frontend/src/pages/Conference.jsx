@@ -12,7 +12,9 @@ function Conference({gameId}) {
   const [gameStage, setGameStage] = useState("");
   const [filteredPeers, setFilteredPeers] = useState(peers);
 
-  
+  // Getting info
+  useEffect(() => {
+  }, []);
   
 
   // Focus part
@@ -37,7 +39,7 @@ function Conference({gameId}) {
     const next_value = decision === 0 ? 1 : 0;
     if (peer.isLocal)
     {
-      axios({method: 'post', url: API_URL + `/game/change_state`, data: {game_id: gameId, user_email: peer.name}})
+      axios({method: 'post', url: API_URL + `/game/change_state`, params: {game_id: gameId, user_email: peer.name}})
       .then((response) => {
         if (response.data.event === 'changed'){
           set_decision(next_value);
