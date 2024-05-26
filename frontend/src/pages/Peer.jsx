@@ -18,7 +18,7 @@ function Peer({ peer, is_selected, changeDecision }) {
         playsInline
       />
       <div className="peer-name">
-        {peer.name} {peer.isLocal ? "(You)" : ""}
+        {peer.name} {peer.isLocal ? "(You)" : ""} {peer.roleName}
       </div>
     </div>
   );
