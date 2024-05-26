@@ -133,7 +133,7 @@ async def enter_room_pass(room_code: str, user_email: str):
     found_user = get_user_by_email(db.session, user_email)
     
     if any(game.win == 2 for game in found_room.games):
-        if any(lobby.game.room_id == found_room.id for lobby in found_user.active_in_lobbies):
+        if any(lobby.game and lobby.game.room_id == found_room.id for lobby in found_user.active_in_lobbies):
             return {
                 'event': 'reenter',
                 'game_id': game.id
