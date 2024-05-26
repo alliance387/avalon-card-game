@@ -62,7 +62,7 @@ function Conference({gameId}) {
       if (gameInfo["win"] == 2 && lockStage)
       {
         setLockStage(0);
-        setFilteredPeers({});
+        setFilteredPeers(filteredPeers.filter(peer => false));
         setTimeout(() => {
           setGameStage("Evil");
           setLockStage(1);
@@ -76,7 +76,7 @@ function Conference({gameId}) {
         setLockStage(0);
         setFilteredPeers(peers.filter(peer => evil_dudes.includes(peer.roleName) && peer.roleName !== "oberon"));
         setTimeout(() => {
-          setFilteredPeers({});
+          setFilteredPeers(filteredPeers.filter(peer => false));
           setTimeout(() => {
             setGameStage("Merlin");
             setLockStage(1);
@@ -91,7 +91,7 @@ function Conference({gameId}) {
         setLockStage(0);
         setFilteredPeers(peers.filter(peer => evil_dudes.includes(peer.roleName)));
         setTimeout(() => {
-          setFilteredPeers({});
+          setFilteredPeers(filteredPeers.filter(peer => false));
           setTimeout(() => {
             setGameStage("Percival");
             setLockStage(1);
@@ -105,7 +105,7 @@ function Conference({gameId}) {
         setLockStage(0);
         setFilteredPeers(peers.filter(peer => peer.roleName === "merlin" || peer.roleName === "morgana"));
         setTimeout(() => {
-          setFilteredPeers({});
+          setFilteredPeers(filteredPeers.filter(peer => false));
           setTimeout(() => {
             setGameStage("Game");
             setLockStage(1);
