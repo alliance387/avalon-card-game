@@ -71,6 +71,7 @@ class ModelActiveUser(Base):
     state = Column(Integer, default=0)
     mission = Column(Integer, default=0)
     armed = Column(Integer, default=0)
+    is_leader = Column(Integer, default=0)
     user_id = Column(Integer, ForeignKey('users.id'))
     game_id = Column(Integer, ForeignKey('games.id'))
 
