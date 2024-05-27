@@ -1,27 +1,56 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 
 
 from .models import ModelRoom, ModelUser, ModelSession, ModelApp, ModelGame, ModelActiveUser
 from .schema import UserSchema, SessionSchema, RoomSchema, AppSchema, GameSchema, ActiveUserSchema
 
 # user part
-def get_all_users(db: Session):
-    return db.query(ModelUser).all()
-
-
-def get_user(db: Session, user_id: int):
-    return db.query(ModelUser).filter(ModelUser.id == user_id).first()
-
-
-def get_user_by_email(db: Session, email: str):
-    return db.query(ModelUser).filter(ModelUser.email == email).first()
-
-
-def create_user(db: Session, user: UserSchema, hashed_password: str):
-    db_user = ModelUser(full_name = user.full_name, email = user.email, password = hashed_password)
-    db.add(db_user)
+def create_user(
+        db: Session,
+        full_name: str,
+        email: str,
+        hashed_password: str
+    ):
+    new_db_user = ModelUser(full_name = full_name, email = email, password = hashed_password)
+    db.add(new_db_user)
     db.commit()
-    return db_user
+    return new_db_user
+
+def read_user(
+        db: Session,
+        params: dict,
+        is_first: bool
+    ):
+    if not any(value for value in params.values()):
+        users = db.query(ModelUser).all()
+    else:
+        users = db.query(ModelUser).filter(*(getattr(ModelUser, key) == value for key, value in params.items() if value)).all()
+
+    if not users:
+        return None
+    return users[0] if is_first else users
+
+def update_user(
+        db: Session,
+        params: dict,
+        params_to_change: dict
+    ):
+    user_in_db = db.query(ModelUser).filter(*(getattr(ModelUser, key) == value for key, value in params.items() if value)).first()
+    for name, value in params_to_change.items():
+        if value:
+            setattr(user_in_db, name, value)
+    db.commit()
+    return user_in_db
+
+def delete_user(
+        db: Session,
+        params: dict
+    ):
+    user_in_db = db.query(ModelUser).filter(*(getattr(ModelUser, key) == value for key, value in params.items() if value)).first()
+    db.delete(user_in_db)
+    db.commit()
+    return {'event': 'deleted'}
 
 
 # session part

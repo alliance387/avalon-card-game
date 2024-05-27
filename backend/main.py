@@ -11,7 +11,8 @@ import asyncio
 #schemas
 from sql.schema import UserSchema, UserLoginSchema, RoomSchema, SessionSchema, AppSchema
 # crud
-from sql.crud import get_user_by_email, create_user, get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
+from sql.crud import create_user, read_user, update_user, delete_user
+from sql.crud import get_room_by_100ms_room_id, create_room, create_session, get_sessions_by_user, get_room_by_room_code, \
                     get_all_apps, create_app, get_app_by_access_key, get_all_rooms, get_game_by_id, update_room, update_room_status, get_game_by_room_id_and_non_started, \
                     get_active_user, update_active_user_mermaid, create_game, update_active_users, get_active_users, get_session_by_room_and_user, get_game_by_room_id_and_started, \
                     create_active_user, update_state, update_start_game
@@ -66,8 +67,8 @@ async def make_room(room: RoomSchema):
 
 @app.post("/user/signup", tags=["user"])
 async def make_user(user: UserSchema):
-    if not get_user_by_email(db.session, user.email):
-        create_user(db.session, user, pwd_context.hash(user.password))
+    if not read_user(db.session, {'email': user.email}, is_first=True):
+        create_user(db.session, user.full_name, user.email, pwd_context.hash(user.password))
         return signJWT(user.email)
     else:
         raise HTTPException(status_code=409, detail="Account already exists")
@@ -75,7 +76,7 @@ async def make_user(user: UserSchema):
 
 @app.post("/user/login", tags=["user"])
 async def user_login(user: UserLoginSchema):
-    found_user = get_user_by_email(db.session, user.email)
+    found_user = read_user(db.session, {'email': user.email}, is_first=True)
     if not found_user:
         raise HTTPException(status_code=400, detail="Incorrect username")
     
@@ -87,7 +88,7 @@ async def user_login(user: UserLoginSchema):
 
 @app.post("/session", dependencies=[Depends(JWTBearer())], tags=["session"])
 async def make_session(room_code: str, user_email: str):
-    found_user = get_user_by_email(db.session, user_email)
+    found_user = read_user(db.session, {'email': user_email}, is_first=True)
     if not found_user:
         return {
             'error': 'user not found'
@@ -107,7 +108,7 @@ async def make_session(room_code: str, user_email: str):
 
 @app.get("/session", dependencies=[Depends(JWTBearer())], tags=["session"])
 async def get_sessions(user_email: str):
-    sessions_by_user = get_sessions_by_user(db.session, get_user_by_email(db.session, user_email))
+    sessions_by_user = get_sessions_by_user(db.session, read_user(db.session, {'email': user_email}, is_first=True))
     return [session.rooms_in_session for session in sessions_by_user] 
 
 
@@ -130,7 +131,7 @@ async def get_apps():
 @app.post('/game/enter_room', tags=["games"])
 async def enter_room_pass(room_code: str, user_email: str):
     found_room = get_room_by_room_code(db.session, room_code)
-    found_user = get_user_by_email(db.session, user_email)
+    found_user = read_user(db.session, {'email': user_email}, is_first=True)
     
     if any(game.win == 2 for game in found_room.games):
         if any(lobby.game and lobby.game.room_id == found_room.id for lobby in found_user.active_in_lobbies):
@@ -179,7 +180,7 @@ async def get_game(game_id: int):
 
 @app.post('/game/change_state', tags=["games"])
 async def change_state(game_id: int, user_email: str):
-    found_user = get_user_by_email(db.session, user_email)
+    found_user = read_user(db.session, {'email': user_email}, is_first=True)
     count_states = update_state(db.session, game_id, found_user.id)
     game = get_game_by_id(db.session, game_id)
 
@@ -262,7 +263,7 @@ async def make_quest(game_id: int, is_success: bool, fails: int) -> dict[str, st
 
 @app.post("/game/assasin_move", tags=["games"])
 async def assasin_move(game_id: int, email: str) -> dict[str, str]:
-    suspected_merlin = get_user_by_email(db.session, email)
+    suspected_merlin = read_user(db.session, {'email': email}, is_first=True)
     active_user_info = get_active_user(db.session, game_id, suspected_merlin.id)
     if active_user_info.role == 'merlin':
         update_room_status(db.session, game_id, -1)
@@ -278,7 +279,7 @@ async def assasin_move(game_id: int, email: str) -> dict[str, str]:
 
 @app.post("/game/mermaid_move", tags=["games"])
 async def mermaid_move(game_id: int, email: str) -> dict[str, str]:
-    new_mermaid = get_user_by_email(db.session, email)
+    new_mermaid = read_user(db.session, {'email': email}, is_first=True)
     active_user_info = get_active_user(db.session, game_id, new_mermaid.id)
     if active_user_info.mermaid > 0:
         return {
