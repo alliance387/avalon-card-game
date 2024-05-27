@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 #models
 from sql.models import ModelRoom
@@ -6,7 +7,8 @@ from sql.models import ModelRoom
 from webrtc import generateManagementToken
 from util_func_api import get_info_users, edit_role_users
 
-from sql.crud import get_room_by_100ms_room_id, update_app_management_key, delete_session_crud, get_all_users, get_games_by_room_id, get_room_by_room_code, \
+from sql.crud import read_user, update_user, delete_user
+from sql.crud import get_room_by_100ms_room_id, update_app_management_key, delete_session_crud, get_games_by_room_id, get_room_by_room_code, \
                     delete_game
 
 def get_test_api_calls(app, db, URL_100MS) -> list[callable]:
@@ -25,10 +27,57 @@ def get_test_api_calls(app, db, URL_100MS) -> list[callable]:
 
 
     # test users
-    @app.get('/test/get_all_users', tags=["test-user"])
-    async def get_all_users_for_test():
-        return get_all_users(db.session)
+    @app.get('/test/read_users', tags=["test-user"])
+    async def read_crud_users(
+            id: Optional[int] = 0, 
+            full_name: Optional[str] = '', 
+            email: Optional[str] = '', 
+            password: Optional[str] = '', 
+            is_first: Optional[bool] = False
+        ):
+        return read_user(db.session, {
+            'id': id, 
+            'full_name': full_name,
+            'email': email,
+            'password': password
+        }, is_first)
 
+    @app.get('/test/update_user', tags=["test-user"])
+    async def update_crud_users(
+            id: Optional[int] = 0, 
+            full_name: Optional[str] = '', 
+            email: Optional[str] = '', 
+            password: Optional[str] = '', 
+            id_to_change: Optional[int] = 0, 
+            full_name_to_change: Optional[str] = '', 
+            email_to_change: Optional[str] = '', 
+            password_to_change: Optional[str] = ''
+        ):
+        return update_user(db.session, {
+            'id': id, 
+            'full_name': full_name,
+            'email': email,
+            'password': password
+        }, {
+            'id': id_to_change, 
+            'full_name': full_name_to_change,
+            'email': email_to_change,
+            'password': password_to_change
+        })
+    
+    @app.get('/test/delete_user', tags=["test-user"])
+    async def delete_crud_user(
+            id: Optional[int] = 0, 
+            full_name: Optional[str] = '', 
+            email: Optional[str] = '', 
+            password: Optional[str] = ''
+        ):
+        return delete_user(db.session, {
+            'id': id, 
+            'full_name': full_name,
+            'email': email,
+            'password': password
+        })
 
     # test sessions
     @app.post('/test/delete_session', tags=["test-session"])
@@ -55,7 +104,9 @@ def get_test_api_calls(app, db, URL_100MS) -> list[callable]:
 
     return [
             make_room_clear,
-            get_all_users_for_test,
+            read_crud_users,
+            update_crud_users,
+            delete_crud_user,
             make_room_clear,
             show_all_games_by_room
             ]
